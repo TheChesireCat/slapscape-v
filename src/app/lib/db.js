@@ -1,0 +1,29 @@
+import mysql from 'mysql2/promise';
+
+// const db = mysql({
+//   config: {
+//     host: process.env.DATABASE_HOST,
+//     database: process.env.DATABASE_NAME,
+//     user: process.env.DATABASE_USER,
+//     password: process.env.DATABASE_PASSWORD
+//   }
+// });
+
+
+
+
+export async function executeQuery({ query, values }) {
+  try {
+    const db = await mysql.createConnection({
+      host: process.env.DATABASE_HOST,
+      user: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+    });
+    const results = await db.query(query, values);
+    await db.end();
+    return results;
+  } catch (error) {
+    throw error;
+  }
+}

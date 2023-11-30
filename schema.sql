@@ -1,13 +1,13 @@
--- DROP SCHEMA test;
+DROP SCHEMA test;
 CREATE DATABASE IF NOT EXISTS test;
 USE test;
 
 CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
-	password varbinary(72) NOT NULL,
+	password varchar(72) NOT NULL,
 	bio varchar(255),
 	user_img TEXT
-)
+);
 
 CREATE TABLE post (
     post_id CHAR(36) PRIMARY KEY,
@@ -29,4 +29,35 @@ CREATE TABLE postimages (
     FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
 
+
+-- DELIMITER //
+-- CREATE PROCEDURE LoginUser(IN p_username VARCHAR(30), IN p_password_hash VARCHAR(72))
+-- BEGIN
+--     IF NOT EXISTS (SELECT 1 FROM user WHERE username = p_username AND password = p_password_hash) THEN
+--         SELECT 'Invalid credentials' as result;
+--     ELSE
+--         SELECT 'Authenticated' as result;
+--     END IF;
+-- END //
+-- DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetUserHash(IN p_username VARCHAR(30))
+BEGIN
+    SELECT password as hash FROM user WHERE username = p_username;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE RegisterUser(IN p_username VARCHAR(30), IN p_password_hash VARBINARY(72))
+BEGIN
+    IF EXISTS (SELECT 1 FROM user WHERE username = p_username) THEN
+        SELECT 'Username exists' as result;
+    ELSE
+        INSERT INTO user (username, password) VALUES (p_username, p_password_hash);
+        SELECT 'Success' as result;
+    END IF;
+END //
+DELIMITER ;
 

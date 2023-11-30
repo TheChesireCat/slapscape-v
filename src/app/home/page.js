@@ -1,7 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { verifyJwtToken, getJwtSecretKey } from "@/lib/auth";
+import { verifyJwtToken, getJwtSecretKey } from "@/app/lib/auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -10,16 +10,14 @@ const MapWithNoSSR = dynamic(() => import("@/components/Map"), {
 });
 
 export default async function Home() {
-  async function logout(){
-    "use server"
+  async function logout() {
+    "use server";
     cookies().delete("AUTH_TOKEN");
     redirect("/login");
   }
-  
+
   const token = cookies().get("AUTH_TOKEN")?.value;
-  console.log(token);
   const payload = token ? await verifyJwtToken(token, getJwtSecretKey()) : null;
-  console.log(payload);
   if (!payload) {
     redirect("/login");
   }
@@ -27,14 +25,19 @@ export default async function Home() {
   return (
     <div>
       <form className="leaflet-control absolute top-24 left-24 z-40">
-        <button type="button" className=" text-xl bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2">
+        <button
+          type="button"
+          className=" text-xl bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2"
+        >
           Create post
         </button>
-          <button formAction={logout} className="text-xl bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2">
-            Logout
-          </button>
-        </form>
-      
+        <button
+          formAction={logout}
+          className="text-xl bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2"
+        >
+          Logout
+        </button>
+      </form>
 
       <MapWithNoSSR />
     </div>
