@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from 'next/router';
+
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
@@ -49,7 +49,6 @@ export function ChangeView({ coords, zoom }) {
 export default function Map() {
   const [geoData, setGeoData] = useState({ lat: 64.536634, lng: 16.779852 });
   const [mapZoom, setMapZoom] = useState(12);
-  const [showModal, setShowModal] = useState(true);
 
   const eventHandlers = useMemo(()=>(
     {

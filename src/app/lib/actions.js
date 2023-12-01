@@ -77,3 +77,20 @@ export async function logout() {
   cookies().delete("AUTH_TOKEN");
   redirect("/login");
 }
+
+export async function getAllTags(){
+  const result = await executeQuery({
+    query: "CALL GetAllTags()",
+  });
+  console.log(result);
+  return result[0][0];
+}
+
+export async function createTag(tag,user){
+  const result = await executeQuery({
+    query: "CALL CreateTag(?,?)",
+    values: [tag,user],
+  });
+  revalidateTag("tags");
+  return result[0][0];
+}

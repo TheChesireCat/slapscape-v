@@ -2,7 +2,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-const MapWithNoSSR = dynamic(() => import("@/app/components/Map"), {
+const MapBasicWithNoSSR = dynamic(() => import("@/app/components/MapBasic"), {
   ssr: false,
 });
 
@@ -36,7 +36,8 @@ export default function Home() {
         {/* <button className="leaflet-control absolute top-24 left-24 z-40 text-xl bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
         Create post
       </button> */}
-        <MapWithNoSSR />
+        <MapBasicWithNoSSR />
+
       </div>
     </main>
   );
