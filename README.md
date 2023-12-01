@@ -1,3 +1,14 @@
+# Ibrahim Abbas and Ankit's CS5200 Project
+
+This is a nextjs project which uses mysql as a backend to store geolocated images and enables users to like or comment on them. 
+
+Clone the repo and run `npm install` to install all the dependencies.
+
+Run it with `npm run dev` and open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+schema setup is provided in `schema.sql` file.
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
