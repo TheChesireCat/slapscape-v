@@ -2,7 +2,7 @@ import React from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
-const MapWithNoSSR = dynamic(() => import("@/components/Map"), {
+const MapWithNoSSR = dynamic(() => import("@/app/components/Map"), {
   ssr: false,
 });
 

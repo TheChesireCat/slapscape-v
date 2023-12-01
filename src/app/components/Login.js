@@ -2,7 +2,8 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { loginUser } from "@/app/lib/actions";
-import cookieCutter from 'cookie-cutter'
+import { Button } from "./ui/button";
+// import cookieCutter from 'cookie-cutter'
 
 
 const initialState = {
@@ -12,13 +13,13 @@ const initialState = {
 function LoginButton() {
 const { pending } = useFormStatus()
   return (
-    <button
+    <Button
       type="submit"
       className="w-full bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
       aria-disabled={pending}
     >
       Login
-    </button>
+    </Button>
   );
 }
 
@@ -29,7 +30,7 @@ export default function Register() {
 //   if (payload) {
 //     redirect("/home");
 //   }
-const token = cookieCutter.get('AUTH_TOKEN');
+// const token = cookieCutter.get('AUTH_TOKEN');
   
   return (  
     <div className="bg-gray-100 flex items-center justify-center h-screen">

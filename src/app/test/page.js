@@ -1,5 +1,11 @@
-import Test from '@/components/Test';
+import Test from '@/app/components/Test';
+import ModalTest from '../components/ModalTest';
 
 export default function TestComponent() {
-  return <Test />;
+  return (
+      <div>
+        <ModalTest />
+        <div>Hello</div>
+      </div>
+  );
 }

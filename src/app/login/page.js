@@ -1,3 +1,3 @@
-import Login from '@/components/Login';
+import Login from '@/app/components/Login';
 
 export default () => <Login />;

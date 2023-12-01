@@ -1,4 +1,4 @@
-import Register from '@/components/Register';
+import Register from '@/app/components/Register';
 
 export default () => <Register />;
 

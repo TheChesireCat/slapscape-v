@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { registerUser } from "@/app/lib/actions";
+import { Button } from "@/app/components/ui/button";
 
 const initialState = {
   error: null,
@@ -10,13 +11,13 @@ const initialState = {
 function RegisterButton() {
 const { pending } = useFormStatus()
   return (
-    <button
+    <Button
       type="submit"
       className="w-full bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
       aria-disabled={pending}
     >
       Register
-    </button>
+    </Button>
   );
 }
 
