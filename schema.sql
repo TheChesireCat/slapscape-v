@@ -6,7 +6,6 @@ CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
 	password varchar(72) NOT NULL,
 	bio varchar(255),
-	user_img TEXT
 );
 
 CREATE TABLE post (
@@ -78,6 +77,21 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetUserData(IN p_username VARCHAR(30))
+BEGIN
+    IF EXISTS (SELECT 1 FROM user WHERE username = p_username) THEN
+        SELECT username, bio FROM user WHERE username = p_username;
+    ELSE
+        SELECT 'User does not exist' as result;
+    END IF;
+END //
+DELIMITER ;
+
+
+
+
 
 
 

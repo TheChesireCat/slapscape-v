@@ -127,8 +127,14 @@ export async function newPost(formData) {
     // create a post (title, description, tags)
     // create a post_image (post_id, image_url)
     // create a post_tag (post_id, tag_id)
+}
 
-  return { message: "Success" };
+export async function getUserData(user){
+    const result = await executeQuery({
+        query: "CALL GetUserData(?)",
+        values: [user],
+    });
+    return result[0][0];
 }
 
 export async function logout() {
