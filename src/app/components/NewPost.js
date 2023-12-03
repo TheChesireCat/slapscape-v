@@ -329,7 +329,7 @@ async function action(fData){
             ))}
           </div>
         </div>
-        <div if="submit" className="flex items-center content-center justify-center">
+        <div id="submit" className="flex items-center content-center justify-center">
           <button
             type="submit"
             className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2 input-shadow"
