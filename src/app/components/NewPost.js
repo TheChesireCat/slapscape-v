@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useFormState} from "react-dom";
+import { redirect, useSearchParams } from "next/navigation";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
 import { newPost } from "@/app/lib/actions";
+
 
 // import { createNewPost } from "@/app/lib/actions";
 
@@ -37,6 +39,7 @@ const NewPost = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [tags, setTags] = useState( []); 
   const [tagInput, setTagInput] = useState(''); 
+  const [postError, setPostError] = useState(null);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -137,9 +140,11 @@ const NewPost = () => {
     },
   }));
 
+
+
 //   const [state, formAction] = useFormState(testAction, initialState);
 
-async function action(){
+async function action(fData){  
   const formData = new FormData();
   formData.append('title', title);
   formData.append('description', description);
@@ -149,8 +154,17 @@ async function action(){
   }
   formData.append('lat', loc.lat);
   formData.append('lng', loc.lng);
-  await newPost(formData);
+  setPostError(null);
+  const response =  await newPost(formData);
+  if (response.error) {
+    setPostError(response);
+  } else {
+    redirect("/home");
+  }
 }
+
+
+
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -323,6 +337,7 @@ async function action(){
             Create Post
           </button>
         </div>
+        <p className="text-red-500 text-center">{postError?.error}</p>
       </form>
     </div>
   );
