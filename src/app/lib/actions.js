@@ -1,6 +1,7 @@
 "use server";
 
 import { executeQuery } from "@/app/lib/db";
+import { writeFileSync } from 'fs';
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { getJwtSecretKey } from "@/app/lib/auth";
@@ -10,6 +11,7 @@ import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export async function registerUser(prevState, formData) {
+  console.log(formData);
   const username = formData.get("username");
   const password = formData.get("password");
   if (password.length < 8) {
@@ -73,23 +75,36 @@ export async function createTodo(prevState, formData) {
   }
 }
 
+export async function newPost(formData) {
+    // title, description,selectedTags,imagePreviews,[loc.lat,loc.lng]
+  // save first image file
+  console.log(formData.get('title'));
+  console.log(formData.get('description'));
+  console.log(formData.get('tags'));
+  console.log(formData.get('images'));
+  console.log(formData.get('lat'));
+  console.log(formData.get('lng'));
+  console.log("I am here");
+  return { message: "Success" };
+}
+
 export async function logout() {
   cookies().delete("AUTH_TOKEN");
   redirect("/login");
 }
 
-export async function getAllTags(){
+export async function getAllTags() {
   const result = await executeQuery({
     query: "CALL GetAllTags()",
   });
-  console.log(result);
+  //   console.log(result);
   return result[0][0];
 }
 
-export async function createTag(tag,user){
+export async function createTag(tag, user) {
   const result = await executeQuery({
     query: "CALL CreateTag(?,?)",
-    values: [tag,user],
+    values: [tag, user],
   });
   revalidateTag("tags");
   return result[0][0];

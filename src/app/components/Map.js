@@ -88,7 +88,7 @@ export default function Map() {
         <form className="leaflet-control m-10 mx-auto z-40 w-full flex justify-center items-center overflow-x-auto">
           <button
             formAction={logout}
-            className="input-shadow  text-l border bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded m-2"
+            className="input-shadow  text-l border bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
             ⚠️ Logout ⚠️
           </button>
@@ -100,14 +100,14 @@ export default function Map() {
           />
           <button
             type="button"
-            className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2"
+            className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
             🔎
           </button>
           <Link href={`/home/newpost?lat=${geoData.lat}&lng=${geoData.lng}`}>
           <button
             type="button"
-            className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2 input-shadow "
+            className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2 input-shadow "
           >
            + New
           </button></Link>

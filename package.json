@@ -25,7 +25,6 @@
     "react-dom": "18.2.0",
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
-    "serverless-mysql": "^1.5.5",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1"

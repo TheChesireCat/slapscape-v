@@ -6,8 +6,13 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
+import { newPost } from "@/app/lib/actions";
 
 // import { createNewPost } from "@/app/lib/actions";
+
+const initialState = {
+    error: null,
+  };
 
 function UpdateMapView({ loc }) {
   const map = useMap();
@@ -30,16 +35,15 @@ const NewPost = () => {
   const [manualLat, setManualLat] = useState("");
   const [manualLng, setManualLng] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
-  const [tags, setTags] = useState( []); // Stores the list of fetched tags
-  const [tagInput, setTagInput] = useState(''); // Input for creating a new tag
+  const [tags, setTags] = useState( []); 
+  const [tagInput, setTagInput] = useState(''); 
 
   useEffect(() => {
-    // Fetch tags when component mounts
     const fetchTags = async () => {
       try {
         const response = await fetch('/api/tagList');
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setTags(data);
       } catch (error) {
         console.error('Error fetching tags:', error);
@@ -105,6 +109,7 @@ const NewPost = () => {
 
   const handleImageChange = (e) => {
     const selectedFiles = [...e.target.files];
+    // print type of selected files
     // Append new images to the existing array
     setImages((prevImages) => [...prevImages, ...selectedFiles]);
 
@@ -132,9 +137,24 @@ const NewPost = () => {
     },
   }));
 
+//   const [state, formAction] = useFormState(testAction, initialState);
+
+async function action(){
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('tags', selectedTags);
+  for (let i = 0; i < images.length; i++) {
+    formData.append('images', images[i]);
+  }
+  formData.append('lat', loc.lat);
+  formData.append('lng', loc.lng);
+  await newPost(formData);
+}
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form className="bg-white mx-auto rounded-xl px-8 pt-6 pb-8 mb-4 shadow-lg w-full max-w-sm">
+      <form action={action} className="bg-white mx-auto rounded-xl px-8 pt-6 pb-8 mb-4 shadow-lg w-full max-w-sm">
         <div id="title-new-post" className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -295,7 +315,7 @@ const NewPost = () => {
             ))}
           </div>
         </div>
-        <div className="flex items-center content-center justify-center">
+        <div if="submit" className="flex items-center content-center justify-center">
           <button
             type="submit"
             className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2 input-shadow"
