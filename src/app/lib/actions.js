@@ -15,7 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function registerUser(prevState, formData) {
-  console.log(formData);
+  // console.log(formData);
   const username = formData.get("username");
   const password = formData.get("password");
   if (password.length < 8) {
@@ -89,7 +89,7 @@ export async function newPost(formData) {
     return { error: "* Title and description are required" };
   }
   const imageFiles = formData.getAll("images");
-  console.log(imageFiles);
+  // console.log(imageFiles);
   if (!imageFiles || imageFiles.length === 0) {
     return { error: "* An Image is required" };
   }
@@ -125,18 +125,18 @@ export async function newPost(formData) {
   const payload = await verifyJwtToken(token?.value);
   const username = payload.username;
 
-  console.log(payload);
+  // console.log(payload);
 
-  console.log({
-    postId: postId,
-    title: title,
-    description: description,
-    tags: tags,
-    imageList: imageList,
-    username: username,
-    lat: lat,
-    lng: lng,
-  });
+  // console.log({
+  //   postId: postId,
+  //   title: title,
+  //   description: description,
+  //   tags: tags,
+  //   imageList: imageList,
+  //   username: username,
+  //   lat: lat,
+  //   lng: lng,
+  // });
 
   await executeQuery({
     query: "CALL CreatePost(?,?,?,?,POINT(?,?))",
@@ -172,7 +172,7 @@ export async function getPostsInBounds(neLat, neLng, swLat, swLng) {
       values: [swLat, swLng, neLat, neLng],
     });
 
-    console.log(result);
+    // console.log(result);
 
     return result[0][0];
   } catch (error) {
@@ -207,7 +207,7 @@ export async function updateUserData(prevState,formData){
   const file = formData.get("avatar");
   const username = formData.get("username");
 
-  console.log(formData);
+  // console.log(formData);
   
 
   if (password){
