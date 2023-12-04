@@ -5,62 +5,119 @@ import { useState, useEffect, useMemo } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
-import { MapContainer, TileLayer, Marker, useMap, Popup } from "react-leaflet";
-import { logout } from "@/app/lib/actions";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+  Popup,
+  useMapEvent,
+} from "react-leaflet";
+import { logout, getPostsInBounds } from "@/app/lib/actions";
 import Link from "next/link";
 import Modal from "react-modal";
+import TemporaryDrawer from "./TemporaryDrawer";
+import { CameraIcon, SearchIcon } from "lucide-react";
+import { Icon } from "leaflet";
 
-export const DraggableMarker = ({ initialPosition }) => {
-  const [position, setPosition] = useState(initialPosition);
+const myLocation = new Icon({
+  iconUrl: "https://img.icons8.com/fluency/48/region-code.png",
+  iconSize: [52, 52],
+  iconAnchor: [52 / 2, 52],
+  popupAnchor: [0, -52 / 2],
+});
 
-  const markerRef = useRef(null);
-
-  const eventHandlers = useMemo(
-    () => ({
-      dragend() {
-        const marker = markerRef.current;
-        if (marker != null) {
-          setPosition(marker.getLatLng());
-          // Here, you can also update the geoData state or lift this state up
-        }
-      }
-    }),
-    []
-  );
-
-  return (
-    <Marker
-      draggable={true}
-      eventHandlers={eventHandlers}
-      position={position}
-      ref={markerRef}>
-      <Popup minWidth={90}>
-        <span>You are here</span>
-      </Popup>
-    </Marker>
-  );
-};
+const markerGeneral = new Icon({
+  iconUrl: "https://img.icons8.com/glyph-neue/64/marker--v1.png",
+  iconSize: [52, 52],
+  iconAnchor: [52 / 2, 52],
+  popupAnchor: [0, -52 / 2],
+});
 
 export function ChangeView({ coords, zoom }) {
   const map = useMap();
   map.setView(coords, zoom);
   return null;
 }
+
+function GetBounds() {
+  const [ne, setNe] = useState(null);
+  const [sw, setSw] = useState(null);
+  const map = useMapEvent({
+    dragend: () => {
+      const bounds = map.getBounds();
+      console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
+      setNe(bounds.getNorthEast());
+      setSw(bounds.getSouthWest());
+    },
+    zoomend: () => {
+      const bounds = map.getBounds();
+      console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
+      setNe(bounds.getNorthEast());
+      setSw(bounds.getSouthWest());
+    },
+  });
+
+  const [markers, setMarkers] = useState([]);
+
+  useEffect(() => {
+    if (ne && sw) {
+      fetch("/api/markers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ne, sw }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Handle the data (array of posts)
+          setMarkers(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching markers:", error);
+        });
+    }
+  }, [ne, sw]);
+
+  return (
+    <div>
+      {markers.map((marker) => (
+        <Marker
+          className="z-0"
+          key={marker.post_id}
+          position={[marker.coordinates.x, marker.coordinates.y]}
+          icon={markerGeneral}
+        >
+          <Popup>
+            <Link
+              href={`/post/${marker.post_id}`}
+              className="text-2xl font-bold"
+            >
+              {marker.title}
+            </Link>
+          </Popup>
+        </Marker>
+      ))}
+    </div>
+  );
+}
+
+
 export default function Map() {
   const [geoData, setGeoData] = useState({ lat: 64.536634, lng: 16.779852 });
   const [mapZoom, setMapZoom] = useState(12);
+  const [bounds, setBounds] = useState(null);
 
-  const eventHandlers = useMemo(()=>(
-    {
-      dragend(e){
-        const out = e.target.getLatLng();
-        setGeoData({
-          lat: out.lat,
-          lng: out.lng
-        })
-      }
-    }
-  ));
+  const eventHandlers = useMemo(() => ({
+    dragend(e) {
+      const out = e.target.getLatLng();
+      setGeoData({
+        lat: out.lat,
+        lng: out.lng,
+      });
+    },
+  }));
 
   useEffect(() => {
     // request permission
@@ -77,7 +134,7 @@ export default function Map() {
   }, []);
 
   useEffect(() => {
-    console.log('GeoData changed:', geoData);
+    console.log("GeoData changed:", geoData);
   }, [geoData]);
 
   const center = [geoData.lat, geoData.lng];
@@ -86,13 +143,20 @@ export default function Map() {
     <div>
       <div>
         <form className="leaflet-control m-10 mx-auto z-40 w-full flex justify-center items-center overflow-x-auto">
-          <button
+          {/* <button
             formAction={logout}
             className="input-shadow  text-l border bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
             ⚠️ Logout ⚠️
-          </button>
-
+          </button> */}
+          <Link href={`/home/newpost?lat=${geoData.lat}&lng=${geoData.lng}`}>
+            <button
+              type="button"
+              className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2 input-shadow "
+            >
+              <CameraIcon />
+            </button>
+          </Link>
           <input
             type="text"
             placeholder="Search"
@@ -102,17 +166,11 @@ export default function Map() {
             type="button"
             className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
-            🔎
+            <SearchIcon />
           </button>
-          <Link href={`/home/newpost?lat=${geoData.lat}&lng=${geoData.lng}`}>
-          <button
-            type="button"
-            className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2 input-shadow "
-          >
-           + New
-          </button></Link>
         </form>
       </div>
+      <TemporaryDrawer />
       <MapContainer
         className="absolute"
         center={center}
@@ -127,11 +185,12 @@ export default function Map() {
         />
         {geoData.lat && geoData.lng && (
           <Marker
-            className="z-0"
+            className="z-2"
             position={[geoData.lat, geoData.lng]}
             draggable={true}
             animate={true}
             eventHandlers={eventHandlers}
+            icon={myLocation}
           >
             <Popup>
               <span>You are here</span>
@@ -141,6 +200,7 @@ export default function Map() {
 
         {/* put text on top max z index */}
         <ChangeView coords={center} zoom={mapZoom} />
+        <GetBounds />
       </MapContainer>
     </div>
   );

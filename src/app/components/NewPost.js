@@ -148,12 +148,14 @@ async function action(fData){
   const formData = new FormData();
   formData.append('title', title);
   formData.append('description', description);
-  formData.append('tags', selectedTags);
+  for (const tag of selectedTags) {
+    formData.append('tags', tag);
+  }
   for (let i = 0; i < images.length; i++) {
     formData.append('images', images[i]);
   }
-  formData.append('lat', loc.lat);
-  formData.append('lng', loc.lng);
+  formData.append('lat', manualLat);
+  formData.append('lng', manualLng);
   setPostError(null);
   const response =  await newPost(formData);
   if (response.error) {
@@ -168,7 +170,10 @@ async function action(fData){
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form action={action} className="bg-white mx-auto rounded-xl px-8 pt-6 pb-8 mb-4 shadow-lg w-full max-w-sm">
+      <form action={action} className="bg-white mx-auto rounded-xl px-8 pb-8 mb-4 shadow-lg w-full max-w-md">
+        <h1 className=" text-xl font-bold text-center mb-6 pt-2">
+          Add a New Post
+        </h1>
         <div id="title-new-post" className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"

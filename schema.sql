@@ -1,42 +1,45 @@
-DROP SCHEMA test;
-CREATE DATABASE IF NOT EXISTS test;
-USE test;
+DROP SCHEMA test_2;
+CREATE DATABASE IF NOT EXISTS test_2;
+USE test_2;
 
 CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
 	password varchar(72) NOT NULL,
-	bio varchar(255),
+	bio varchar(255)
 );
 
 CREATE TABLE post (
     post_id CHAR(36) NOT NULL,
+    username VARCHAR(30) NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT,
-    user_id VARCHAR(30),
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
-    city_id INT,
     coordinates POINT NOT NULL,
     UNIQUE(post_id),
-    FOREIGN KEY (user_id) REFERENCES user(username)
+    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
 );
 
 CREATE TABLE postimages (
-    image_id CHAR(36) NOT NULL,
     imageUrl VARCHAR(255),
-    thumbUrl VARCHAR(255),
     post_id CHAR(36),
-    image_caption VARCHAR(255),
-    UNIQUE(image_id),
-    FOREIGN KEY (post_id) REFERENCES post(post_id)
+    UNIQUE(imageUrl),
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE
 );
 
 CREATE TABLE tags (
-    tag VARCHAR(20),
+    tag VARCHAR(20) PRIMARY KEY,
     tag_created_by VARCHAR(30),
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(tag),
     FOREIGN KEY (tag_created_by) REFERENCES user(username)
 );
+
+CREATE TABLE posttags (
+    post_id CHAR(36),
+    tag VARCHAR(20),
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag) REFERENCES tags(tag)
+);
+
 
 DELIMITER //
 CREATE PROCEDURE GetUserHash(IN p_username VARCHAR(30))
@@ -90,8 +93,48 @@ END //
 DELIMITER ;
 
 
+DELIMITER //
+CREATE PROCEDURE CreatePost(IN p_post_id CHAR(36), IN p_username VARCHAR(30), IN p_title VARCHAR(100), IN p_description TEXT, IN p_coordinates POINT)
+BEGIN
+    INSERT INTO post (post_id, username, title, description, coordinates) VALUES (p_post_id, p_username, p_title, p_description, p_coordinates);
+    SELECT p_post_id as post_id;
+END //
+DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE CreatePostImage(IN p_imageUrl VARCHAR(255), IN p_post_id CHAR(36))
+BEGIN
+    INSERT INTO postimages (imageUrl, post_id) VALUES (p_imageUrl, p_post_id);
+END //
+DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE CreatePostTag(IN p_post_id CHAR(36), IN p_tag VARCHAR(20))
+BEGIN
+    INSERT INTO posttags (post_id, tag) VALUES (p_post_id, p_tag);
+END //
+DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE GetAllPosts()
+BEGIN
+    SELECT post_id, username, title, ST_AsText(coordinates) AS coordinates
+    FROM post;
+END //
+DELIMITER ;
 
-
+DELIMITER //
+CREATE PROCEDURE GetPostsInViewport(IN p_sw_lat DECIMAL(10, 8), IN p_sw_lng DECIMAL(11, 8), IN p_ne_lat DECIMAL(10, 8), IN p_ne_lng DECIMAL(11, 8))
+BEGIN
+    
+    select post_id, title, date_created, ST_AsText(coordinates) AS coordinates
+    from post 
+    where ST_Contains(
+        ST_GeomFromText(
+            CONCAT(
+                'Polygon((', p_sw_lat, ' ', p_sw_lng, ', ', p_sw_lat, ' ', p_ne_lng, ', ', p_ne_lat, ' ', p_ne_lng, ', ', p_ne_lat, ' ', p_sw_lng, ', ', p_sw_lat, ' ', p_sw_lng, '))'
+                )
+            ), coordinates
+        );
+END //
+DELIMITER ;
