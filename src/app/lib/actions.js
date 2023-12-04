@@ -138,8 +138,6 @@ export async function newPost(formData) {
     lng: lng,
   });
 
-  
-
   await executeQuery({
     query: "CALL CreatePost(?,?,?,?,POINT(?,?))",
     values: [postId, username, title, description, lat, lng],
@@ -165,37 +163,33 @@ export async function newPost(formData) {
   // console.log(result);
 
   return { message: "Success" };
-
 }
 
 export async function getPostsInBounds(neLat, neLng, swLat, swLng) {
   try {
-      const result = await executeQuery({
-          query: "CALL GetPostsInViewport(?,?,?,?)",
-          values: [swLat, swLng, neLat, neLng ]
-      });
+    const result = await executeQuery({
+      query: "CALL GetPostsInViewport(?,?,?,?)",
+      values: [swLat, swLng, neLat, neLng],
+    });
 
-      console.log(result);
+    console.log(result);
 
-      return result[0][0];
+    return result[0][0];
   } catch (error) {
-      console.error("Error fetching posts within bounds:", error);
-      return { error: "Error fetching posts" };
+    console.error("Error fetching posts within bounds:", error);
+    return { error: "Error fetching posts" };
   }
 }
 
-
-
-
 export async function getAllPosts() {
   try {
-      const result = await executeQuery({
-          query: "CALL GetAllPosts()"
-      });
-      return result[0][0];
-    } catch (error) {
-      throw error;
-    }
+    const result = await executeQuery({
+      query: "CALL GetAllPosts()",
+    });
+    return result[0][0];
+  } catch (error) {
+    throw error;
+  }
 }
 
 export async function getUserData(user) {
@@ -204,6 +198,58 @@ export async function getUserData(user) {
     values: [user],
   });
   return result[0][0];
+}
+
+
+export async function updateUserData(prevState,formData){
+  const password =formData.get("password");
+  const bio = formData.get("bio");
+  const file = formData.get("avatar");
+  const username = formData.get("username");
+
+  console.log(formData);
+  
+
+  if (password){
+    if (password.length < 8) {
+      return { error: "* Password must be at least 8 characters long" };
+    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    const result_2 = await executeQuery({
+      query: "CALL UpdateUserPassword(?,?)",
+      values: [username,passwordHash],
+    });
+  }
+
+  if (file.size > 0){
+    const fileExtension = file.name.split(".").pop();
+    const filePath = `${uuidv4()}.${fileExtension}`;
+    const client = new S3Client({ region: process.env.AWS_REGION });
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: filePath,
+      Body: buffer,
+      ContentType: file.type,
+    });
+    const response = await client.send(command);
+    const avatar = "https://slapscape-bucket.s3.amazonaws.com/" + filePath;
+    const result_3 = await executeQuery({
+      query: "CALL UpdateUserImg(?,?)",
+      values: [username,avatar],
+    });
+  }
+
+  if(bio){
+    const result = await executeQuery({
+      query: "CALL UpdateUserBio(?,?)",
+      values: [username,bio],
+    });
+  }
+
+
+  revalidatePath("/home/user/");
+  redirect("/home/user/") ;
 }
 
 export async function logout() {

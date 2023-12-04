@@ -5,6 +5,8 @@ USE test_2;
 CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
 	password varchar(72) NOT NULL,
+    user_img varchar(255),
+    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
 	bio varchar(255)
 );
 
@@ -22,6 +24,7 @@ CREATE TABLE post (
 CREATE TABLE postimages (
     imageUrl VARCHAR(255),
     post_id CHAR(36),
+    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(imageUrl),
     FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE
 );
@@ -39,6 +42,14 @@ CREATE TABLE posttags (
     FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
     FOREIGN KEY (tag) REFERENCES tags(tag)
 );
+
+
+DELIMITER//
+CREATE PROCEDURE DeleteUser(IN p_username VARCHAR(30))
+BEGIN
+    DELETE FROM user WHERE username = p_username;
+END //
+DELIMITER ;
 
 
 DELIMITER //
@@ -81,14 +92,45 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS GetUserData;
+
 DELIMITER //
 CREATE PROCEDURE GetUserData(IN p_username VARCHAR(30))
 BEGIN
     IF EXISTS (SELECT 1 FROM user WHERE username = p_username) THEN
-        SELECT username, bio FROM user WHERE username = p_username;
+        SELECT username, bio, user_img FROM user WHERE username = p_username;
     ELSE
         SELECT 'User does not exist' as result;
     END IF;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE UpdateUserData(IN p_username CHAR(30),IN p_password varchar(72) , IN p_bio VARCHAR(255), IN p_user_img VARCHAR(255))
+BEGIN
+    UPDATE user SET bio = p_bio, user_img = p_user_img, password = p_password WHERE username = p_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE UpdateUserBio(IN p_username CHAR(30), IN p_bio VARCHAR(255))
+BEGIN
+    UPDATE user SET bio = p_bio WHERE username = p_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE UpdateUserPassword(IN p_username CHAR(30), IN p_password VARCHAR(72))
+BEGIN
+    UPDATE user SET password = p_password WHERE username = p_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE UpdateUserImg(IN p_username CHAR(30), IN p_user_img VARCHAR(255))
+BEGIN
+    UPDATE user SET user_img = p_user_img WHERE username = p_username;
 END //
 DELIMITER ;
 

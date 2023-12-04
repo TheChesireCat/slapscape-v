@@ -2,7 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { loginUser } from "@/app/lib/actions";
-import { Button } from "./ui/button";
+import { Button } from "@/app/components/ui/button";
 // import cookieCutter from 'cookie-cutter'
 
 
@@ -23,7 +23,7 @@ const { pending } = useFormStatus()
   );
 }
 
-export default function Register() {
+export default function Login() {
   const [state, formAction] = useFormState(loginUser, initialState);
 //   const token = cookieCutter.get('AUTH_TOKEN');
 //   const payload = token ? await verifyJwtToken(token, getJwtSecretKey()) : null;
@@ -63,7 +63,7 @@ export default function Register() {
         </form>
         <p className="text-red-500 text-center pt-4">{state?.error}</p>
         <p className="text-center mt-4">
-          Don't have an account?
+          Don&#39;t have an account?
           <a href="/register" className="text-purple-600 hover:text-purple-800">
             {" "}
             Register here

@@ -5,7 +5,6 @@ export async function POST(request) {
         const data = await request.json();
         const { ne, sw } = data;
 
-        // Validate the coordinates
         if (!ne || !sw) {
             return new Response(JSON.stringify({ error: 'NE and SW coordinates are required' }), {
                 status: 400,
@@ -15,7 +14,6 @@ export async function POST(request) {
             });
         }
 
-        // Fetch posts within the bounds
         const posts = await getPostsInBounds(ne.lat, ne.lng, sw.lat, sw.lng);
 
         return new Response(JSON.stringify(posts), {

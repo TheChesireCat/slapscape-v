@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Cookies from "js-cookie";
 
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -13,12 +14,11 @@ import {
   Popup,
   useMapEvent,
 } from "react-leaflet";
-import { logout, getPostsInBounds } from "@/app/lib/actions";
 import Link from "next/link";
-import Modal from "react-modal";
 import TemporaryDrawer from "./TemporaryDrawer";
 import { CameraIcon, SearchIcon } from "lucide-react";
 import { Icon } from "leaflet";
+import { Snackbar, Alert } from "@mui/material";
 
 const myLocation = new Icon({
   iconUrl: "https://img.icons8.com/fluency/48/region-code.png",
@@ -43,6 +43,9 @@ export function ChangeView({ coords, zoom }) {
 function GetBounds() {
   const [ne, setNe] = useState(null);
   const [sw, setSw] = useState(null);
+  const [isFetchingData, setIsFetchingData] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const map = useMapEvent({
     dragend: () => {
       const bounds = map.getBounds();
@@ -55,23 +58,38 @@ function GetBounds() {
       console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
       setNe(bounds.getNorthEast());
       setSw(bounds.getSouthWest());
-    },
+    }
   });
 
   const [markers, setMarkers] = useState([]);
 
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  useEffect(() => {
+    setNe(map.getBounds().getNorthEast());
+    setSw(map.getBounds().getSouthWest());
+  },[])
+
   useEffect(() => {
     if (ne && sw) {
+      setIsFetchingData(true);
+      setSnackbarOpen(true);
       fetch("/api/markers", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/sjson",
         },
         body: JSON.stringify({ ne, sw }),
       })
         .then((response) => response.json())
         .then((data) => {
-          // Handle the data (array of posts)
+          setIsFetchingData(false);
+          setSnackbarOpen(false);
           setMarkers(data);
         })
         .catch((error) => {
@@ -80,18 +98,24 @@ function GetBounds() {
     }
   }, [ne, sw]);
 
+  const ne_ = map.getBounds().getNorthEast();
+  const sw_ = map.getBounds().getSouthWest();
+
+
+
   return (
     <div>
       {markers.map((marker) => (
         <Marker
-          className="z-0"
+          className="z-0 leaflet-bottom"
           key={marker.post_id}
+          draggable={false}
           position={[marker.coordinates.x, marker.coordinates.y]}
           icon={markerGeneral}
         >
           <Popup>
             <Link
-              href={`/post/${marker.post_id}`}
+              href={`/home/post/${marker.post_id}`}
               className="text-2xl font-bold"
             >
               {marker.title}
@@ -99,15 +123,29 @@ function GetBounds() {
           </Popup>
         </Marker>
       ))}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          {isFetchingData ? "Getting Marker Data..." : "Markers updated"}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
-
 
 export default function Map() {
   const [geoData, setGeoData] = useState({ lat: 64.536634, lng: 16.779852 });
   const [mapZoom, setMapZoom] = useState(12);
   const [bounds, setBounds] = useState(null);
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const eventHandlers = useMemo(() => ({
     dragend(e) {
@@ -119,19 +157,76 @@ export default function Map() {
     },
   }));
 
-  useEffect(() => {
-    // request permission
+  // useEffect(() => {
+  //   // request permission
 
+  //   if (navigator.geolocation) {
+  //     setIsFetchingLocation(true);
+  //     setSnackbarOpen(true);
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setGeoData({
+  //           lat: position.coords.latitude,
+  //           lng: position.coords.longitude,
+  //         });
+  //         setMapZoom(20);
+  //         setIsFetchingLocation(false);
+  //         setSnackbarOpen(false);
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //         setIsFetchingLocation(false);
+  //         setSnackbarOpen(false);
+  //       }
+  //     );
+  //   }
+  // }, []);
+
+  const fetchLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setGeoData({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-        setMapZoom(20);
-      });
+      setIsFetchingLocation(true);
+      setSnackbarOpen(true);
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const newGeoData = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setGeoData(newGeoData);
+          setMapZoom(20);
+          Cookies.set("location", JSON.stringify(newGeoData), { expires: 7 }); // Store location in cookies
+          Cookies.set("zoom", 20, { expires: 7 });
+          setIsFetchingLocation(false);
+          setSnackbarOpen(false);
+        },
+        (error) => {
+          console.error("Error fetching geolocation:", error);
+          setIsFetchingLocation(false);
+          setSnackbarOpen(false);
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    const storedLocation = Cookies.get("location");
+    const storedZoom = Cookies.get("zoom");
+    if (storedLocation) {
+      setGeoData(JSON.parse(storedLocation));
+    }
+    if (storedZoom) {
+      setMapZoom(storedZoom);
+    } else {
+      fetchLocation();
     }
   }, []);
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
 
   useEffect(() => {
     console.log("GeoData changed:", geoData);
@@ -141,8 +236,8 @@ export default function Map() {
 
   return (
     <div>
-      <div>
-        <form className="leaflet-control m-10 mx-auto z-40 w-full flex justify-center items-center overflow-x-auto">
+      <div >
+        <form className="leaflet-control bg-transparent m-10 mx-auto z-40 w-full flex justify-center items-center overflow-x-auto">
           {/* <button
             formAction={logout}
             className="input-shadow  text-l border bg-slate-500 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl m-2"
@@ -183,9 +278,11 @@ export default function Map() {
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           maxZoom={20}
         />
+
         {geoData.lat && geoData.lng && (
           <Marker
-            className="z-2"
+            zIndexOffset={1000}
+            className="leaflet-top"
             position={[geoData.lat, geoData.lng]}
             draggable={true}
             animate={true}
@@ -202,6 +299,19 @@ export default function Map() {
         <ChangeView coords={center} zoom={mapZoom} />
         <GetBounds />
       </MapContainer>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          {isFetchingLocation ? "Getting location..." : "Location updated"}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
