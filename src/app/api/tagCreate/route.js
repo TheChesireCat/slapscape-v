@@ -21,7 +21,7 @@ export async function POST(request) {
 
       const user = await verifyJwtToken(cookies().get('AUTH_TOKEN')?.value);
       const result = await createTag(tag,user.username);
-      console.log('result', result);
+      // console.log('result', result);
   
       return new Response(JSON.stringify({ message: 'Tag created successfully' }), {
         status: 201,

@@ -1,6 +1,6 @@
 "use client";
 
-import { updateUserData } from "@/app/lib/actions";
+import { updateUserData, del, deleteUser } from "@/app/lib/actions";
 import { Button } from "@/app/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
@@ -97,12 +97,14 @@ export default function User({ userdata }) {
           </Button>
           <Button
             type="button"
+            onClick={() => deleteUser(userdata.username)}
             className=" bg-red-800 text-white p-4 rounded-xl button-shadow hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-50"
           >
             Delete Account
           </Button>
           <Button
             type="button"
+
             className=" bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
           >
             <Link href="/home">Home</Link>

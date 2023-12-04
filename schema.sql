@@ -33,7 +33,7 @@ CREATE TABLE tags (
     tag VARCHAR(20) PRIMARY KEY,
     tag_created_by VARCHAR(30),
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (tag_created_by) REFERENCES user(username)
+    FOREIGN KEY (tag_created_by) REFERENCES user(username) ON DELETE SET NULL
 );
 
 CREATE TABLE posttags (
@@ -44,7 +44,7 @@ CREATE TABLE posttags (
 );
 
 
-DELIMITER//
+DELIMITER //
 CREATE PROCEDURE DeleteUser(IN p_username VARCHAR(30))
 BEGIN
     DELETE FROM user WHERE username = p_username;

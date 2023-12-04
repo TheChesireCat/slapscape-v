@@ -257,6 +257,15 @@ export async function logout() {
   redirect("/login");
 }
 
+export async function deleteUser(user){
+  const result = await executeQuery({
+    query: "CALL DeleteUser(?)",
+    values: [user],
+  });
+  cookies().delete("AUTH_TOKEN");
+  redirect("/login");
+}
+
 export async function getAllTags() {
   const result = await executeQuery({
     query: "CALL GetAllTags()",

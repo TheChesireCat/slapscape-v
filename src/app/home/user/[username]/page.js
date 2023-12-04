@@ -1,4 +1,5 @@
 import { getUserData } from "@/app/lib/actions";
+import { CardContent, Typography } from "@mui/material";
 
 export default async function UserProfile({ params }) {
   const userdata = await getUserData(params.username);
@@ -27,12 +28,11 @@ export default async function UserProfile({ params }) {
             >
               Username
             </label>
-            <label
-              id="username"
-              className="text-l block shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
+            <CardContent>
+            <Typography variant="primary" color="text.primary">
               {userdata[0].username}
-            </label>
+            </Typography>
+            </CardContent>
           </div>
           
           <div className="mb-4 mx-auto">
@@ -60,14 +60,11 @@ export default async function UserProfile({ params }) {
             >
               Bio
             </label>
-            <textarea
-              id="bio"
-              type="text"
-              name="bio"
-              placeholder="Enter Bio Here"
-              defaultValue={userdata?.bio}
-              className="block shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            ></textarea>
+            <CardContent>
+            <Typography variant="primary" color="text.primary">
+              {userdata[0].bio}
+            </Typography>
+            </CardContent>
           </div>
         </form>
       </div>

@@ -51,13 +51,13 @@ function GetBounds() {
   const map = useMapEvent({
     dragend: () => {
       const bounds = map.getBounds();
-      console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
+      // console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
       setNe(bounds.getNorthEast());
       setSw(bounds.getSouthWest());
     },
     zoomend: () => {
       const bounds = map.getBounds();
-      console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
+      // console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
       setNe(bounds.getNorthEast());
       setSw(bounds.getSouthWest());
     },
