@@ -40,6 +40,8 @@ export function ChangeView({ coords, zoom }) {
   return null;
 }
 
+
+
 function GetBounds() {
   const [ne, setNe] = useState(null);
   const [sw, setSw] = useState(null);
@@ -58,7 +60,7 @@ function GetBounds() {
       console.log({ ne: bounds.getNorthEast(), sw: bounds.getSouthWest() });
       setNe(bounds.getNorthEast());
       setSw(bounds.getSouthWest());
-    }
+    },
   });
 
   const [markers, setMarkers] = useState([]);
@@ -73,7 +75,7 @@ function GetBounds() {
   useEffect(() => {
     setNe(map.getBounds().getNorthEast());
     setSw(map.getBounds().getSouthWest());
-  },[])
+  }, []);
 
   useEffect(() => {
     if (ne && sw) {
@@ -101,8 +103,6 @@ function GetBounds() {
   const ne_ = map.getBounds().getNorthEast();
   const sw_ = map.getBounds().getSouthWest();
 
-
-
   return (
     <div>
       {markers.map((marker) => (
@@ -110,7 +110,7 @@ function GetBounds() {
           className="z-0 leaflet-bottom"
           key={marker.post_id}
           draggable={false}
-          position={[marker.coordinates.x, marker.coordinates.y]}
+          position={[marker.lat,marker.lon]}
           icon={markerGeneral}
         >
           <Popup>
@@ -157,30 +157,6 @@ export default function Map() {
     },
   }));
 
-  // useEffect(() => {
-  //   // request permission
-
-  //   if (navigator.geolocation) {
-  //     setIsFetchingLocation(true);
-  //     setSnackbarOpen(true);
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setGeoData({
-  //           lat: position.coords.latitude,
-  //           lng: position.coords.longitude,
-  //         });
-  //         setMapZoom(20);
-  //         setIsFetchingLocation(false);
-  //         setSnackbarOpen(false);
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //         setIsFetchingLocation(false);
-  //         setSnackbarOpen(false);
-  //       }
-  //     );
-  //   }
-  // }, []);
 
   const fetchLocation = () => {
     if (navigator.geolocation) {
@@ -236,7 +212,7 @@ export default function Map() {
 
   return (
     <div>
-      <div >
+      <div>
         <form className="leaflet-control bg-transparent m-10 mx-auto z-40 w-full flex justify-center items-center overflow-x-auto">
           {/* <button
             formAction={logout}

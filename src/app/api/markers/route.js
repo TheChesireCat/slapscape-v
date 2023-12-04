@@ -15,6 +15,7 @@ export async function POST(request) {
         }
 
         const posts = await getPostsInBounds(ne.lat, ne.lng, sw.lat, sw.lng);
+        // console.log('posts', posts);
 
         return new Response(JSON.stringify(posts), {
             status: 200,

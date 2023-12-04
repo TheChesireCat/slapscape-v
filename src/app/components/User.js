@@ -3,6 +3,7 @@
 import { updateUserData } from "@/app/lib/actions";
 import { Button } from "@/app/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
+import Link from "next/link";
 
 const initialState = {
   error: null,
@@ -87,12 +88,28 @@ export default function User({ userdata }) {
               className="block shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             ></textarea>
           </div>
+          <div className="flex justify-center gap-4 mb-4">
           <Button
             type="submit"
-            className="w-full bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+            className="w-1/3 bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
           >
             Update
           </Button>
+          <Button
+            type="button"
+            className=" bg-red-800 text-white p-4 rounded-xl button-shadow hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-50"
+          >
+            Delete Account
+          </Button>
+          <Button
+            type="button"
+            className=" bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+          >
+            <Link href="/home">Home</Link>
+          </Button>
+          </div>
+          
+
         </form>
       </div>
 

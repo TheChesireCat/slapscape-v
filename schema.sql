@@ -169,7 +169,7 @@ DELIMITER //
 CREATE PROCEDURE GetPostsInViewport(IN p_sw_lat DECIMAL(10, 8), IN p_sw_lng DECIMAL(11, 8), IN p_ne_lat DECIMAL(10, 8), IN p_ne_lng DECIMAL(11, 8))
 BEGIN
     
-    select post_id, title, date_created, ST_AsText(coordinates) AS coordinates
+    select post_id, title, date_created, ST_X(coordinates) as lat, ST_Y(coordinates) AS lon
     from post 
     where ST_Contains(
         ST_GeomFromText(

@@ -7,7 +7,7 @@ export default async function UserProfile(){
 
     const payload = await verifyJwtToken(cookies().get('AUTH_TOKEN')?.value);
     const userdata = await getUserData(payload.username);
-    console.log(userdata);
+    // console.log(userdata);
 
     return <User userdata={userdata[0]}/>
 }
