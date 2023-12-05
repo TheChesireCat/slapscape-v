@@ -115,7 +115,7 @@ export default function User({ userdata }) {
         </form>
       </div>
 
-      {userdata ? JSON.stringify(userdata) : "No user data"}
+      {/* {userdata ? JSON.stringify(userdata) : "No user data"} */}
     </div>
   );
 }

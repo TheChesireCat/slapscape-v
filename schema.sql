@@ -180,3 +180,24 @@ BEGIN
         );
 END //
 DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE GetPostInfo(IN p_post_id CHAR(36))
+BEGIN
+    SELECT p.post_id, DATE_FORMAT(p.date_created,"%D %b %Y") as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
+    FROM post as p
+    JOIN user as u ON p.username = u.username
+    WHERE post_id = p_post_id;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE GetPostImages(IN p_post_id CHAR(36))
+BEGIN
+    SELECT imageUrl
+    FROM postimages
+    WHERE post_id = p_post_id;
+END //
+DELIMITER ;

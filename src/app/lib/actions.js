@@ -282,3 +282,37 @@ export async function createTag(tag, user) {
   revalidateTag("tags");
   return result[0][0];
 }
+
+export async function getPostTags(postId) {
+  const result = await executeQuery({
+    query: "CALL GetPostTags(?)",
+    values: [postId],
+  });
+  return result[0][0];
+}
+
+export async function getPostImages(postId) {
+  const result = await executeQuery({
+    query: "CALL GetPostImages(?)",
+    values: [postId],
+  });
+  return result[0][0];
+}
+
+export async function getPostInfo(postId) {
+  const result = await executeQuery({
+    query: "CALL GetPostInfo(?)",
+    values: [postId],
+  });
+  return result[0][0];
+}
+
+export async function getPostComments(postId) {
+  const result = await executeQuery({
+    query: "CALL GetPostComments(?)",
+    values: [postId],
+  });
+  return result[0][0];
+}
+
+
