@@ -340,3 +340,17 @@ export async function getTotalLikes(postId) {
   });
   return result[0][0][0];
 }
+
+export async function addComment(prevState,formData) {
+  const comment = formData.get("commentText");
+  const username = formData.get("username");
+  const postId = formData.get("post_id");
+  if (!comment) {
+    return { error: "* Comment cannot be empty" };
+  }
+  const result = await executeQuery({
+    query: "CALL CreateComment(?,?,?)",
+    values: [postId, username, comment],
+  });
+  revalidatePath("/home/post/[id]");
+}

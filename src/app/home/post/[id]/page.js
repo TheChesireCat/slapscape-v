@@ -1,11 +1,3 @@
-// export default function ViewPostPage({post_id}){
-
-// get post info,
-// get post images
-// get post tags
-// get post comments
-// get post likes
-
 import * as React from "react";
 import Box from "@mui/material/Box";
 import ImageList from "@mui/material/ImageList";
@@ -16,13 +8,14 @@ import {
   getPostLiked,
   getPostTags,
   getTotalLikes,
+  getPostComments,
 } from "@/app/lib/actions";
-import { Comment } from "@mui/icons-material";
-import { Heart } from "lucide-react";
 import { cookies } from "next/headers";
 import { verifyJwtToken } from "@/app/lib/auth";
 import AddLike from "@/app/components/AddLike";
 import { redirect } from "next/navigation";
+import AddComment from "@/app/components/AddComment";
+import { Avatar } from "@mui/material";
 
 export default async function PostPage({ params }) {
   // console.log("id", params.id);
@@ -31,30 +24,13 @@ export default async function PostPage({ params }) {
   const token = cookies().get("AUTH_TOKEN")?.value;
   const payload = token ? await verifyJwtToken(token) : null;
   const username = payload?.username;
-  //   const postData = await getPostData(post_id);
-
-  //   if (postData[0].result) {
-  //     return (
-  //       <div>
-  //         Post Doesn't Exist
-  //       </div>
-  //     );
-  //   }
-
-  //   const title = postData[0].title;
-  //   const description = postData[0].description;
-  //   const ursername = postData[0].username;
-  //   const lat = postData[0].lat;
-  //   const lng = postData[0].lng;
-  //   const user_img = postData[0].user_img;
-  //   const tagList = await getPostTags(post_id);
 
   const postData = await getPostInfo(post_id);
 
   if (!postData[0]) {
     redirect("/404");
   }
-  
+
   // console.log(postData[0]);
 
   const postImages = await getPostImages(post_id);
@@ -67,6 +43,9 @@ export default async function PostPage({ params }) {
   // console.log(tags);
 
   const likeCount = await getTotalLikes(post_id);
+
+  const comments = await getPostComments(post_id);
+  // console.log(comments);
 
   return (
     <div className="bg-gray-100">
@@ -101,7 +80,10 @@ export default async function PostPage({ params }) {
               <div>
                 <div className="mb-2">
                   {tags.map((tag) => (
-                    <div key={tag.tag} className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full">
+                    <div
+                      key={tag.tag}
+                      className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
+                    >
                       {tag.tag}
                     </div>
                   ))}
@@ -136,54 +118,30 @@ export default async function PostPage({ params }) {
               <div className="comments-section mb-4 mt-2">
                 <h2 className="text-gray-900 font-bold mb-2">Comments</h2>
                 <div className="comment-list h-50 lg:h-50 md:h-50 overflow-y-scroll">
-                  {/* Placeholder for comment items */}
-                  <div className="comment-item border-t border-gray-200 pt-2">
-                    <p className="text-sm text-gray-600">Username</p>
-                    <p className="text-gray-700">
-                      This is a sample comment to show the structure.
-                    </p>
-                  </div>
-
-                  <div className="comment-item border-t border-gray-200 pt-2">
-                    <p className="text-sm text-gray-600">Username</p>
-                    <p className="text-gray-700">
-                      This is a sample comment to show the structure.
-                    </p>
-                  </div>
-                  <div className="comment-item border-t border-gray-200 pt-2">
-                    <p className="text-sm text-gray-600">Username</p>
-                    <p className="text-gray-700">
-                      This is a sample comment to show the structure.
-                    </p>
-                  </div>
-                  <div className="comment-item border-t border-gray-200 pt-2">
-                    <p className="text-sm text-gray-600">Username</p>
-                    <p className="text-gray-700">
-                      This is a sample comment to show the structure.
-                    </p>
-                  </div>
-
-                  {/* Repeat the above div for each comment */}
-                </div>
-                <div className="m-8 flex justify-center items-center">
-                  <form className="w-full">
-                    <div className="input-shadow h-20 w-full py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                      <label className="sr-only">Your comment</label>
-                      <textarea
-                        id="comment"
-                        className="w-full h-full px-0 text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-                        placeholder="Write a comment..."
-                        required
-                      ></textarea>
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-purple-500 border hover:bg-purple-700 text-white py-2 px-4 rounded-xl m-2 input-shadow"
+                  {comments.map((comment, i) => (
+                    <div
+                      key={i}
+                      className="flex comment-item border-t border-gray-200 pt-2"
                     >
-                      Comment <Comment className="ml-2" />
-                    </button>
-                  </form>
+                      <div className="flex w-10 h-10 mr-4 justify-items-center">
+                        <Avatar
+                          className="border border-grey-200"
+                          src={comment.user_img}
+                        />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500">
+                          {comment.date_str}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {comment.username}
+                        </p>
+                        <p className="text-gray-700">{comment.comment}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+                <AddComment postId={post_id} username={username} />
               </div>
               <div
                 id="user-info-post-bottom"
