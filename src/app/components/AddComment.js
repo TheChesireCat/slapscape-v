@@ -4,7 +4,6 @@ import { Comment } from "@mui/icons-material";
 import { addComment } from "../lib/actions";
 import { use, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { useEffect } from "react";
 
 const initialState = {
   error: null,

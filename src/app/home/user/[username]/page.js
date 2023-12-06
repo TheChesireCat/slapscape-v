@@ -7,7 +7,7 @@ export default async function UserProfile({ params }) {
   if (userdata[0].result){
     return (
       <div>
-        User Doesn't Exist
+        User Doesn&apos;t Exist
       </div>
     );
   }

@@ -248,8 +248,7 @@ export async function updateUserData(prevState,formData){
   }
 
 
-  revalidatePath("/home/user/");
-  redirect("/home/user/") ;
+  revalidatePath("/home/user/", 'page');
 }
 
 export async function logout() {
@@ -328,7 +327,7 @@ export async function addOrRemoveLike(postId, username) {
     query: "CALL AddOrRemoveLike(?,?)",
     values: [postId, username],
   });
-  revalidatePath("/home/post/[id]");
+  revalidatePath("/home/post/[id]",'page');
   return result[0][0];
 }
 
@@ -352,5 +351,5 @@ export async function addComment(prevState,formData) {
     query: "CALL CreateComment(?,?,?)",
     values: [postId, username, comment],
   });
-  revalidatePath("/home/post/[id]");
+  revalidatePath("/home/post/[id]",'page');
 }

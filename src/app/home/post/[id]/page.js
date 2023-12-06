@@ -49,9 +49,6 @@ export default async function PostPage({ params }) {
 
   return (
     <div className="bg-gray-100">
-      {/* <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="max-w-sm w-full lg:max-w-full lg:flex m-4 mx-auto ">
-       */}
       <div className="rounded-t-lg border-gray-400 p-10 flex justify-center h-screen sm:h-full md:h-screen overflow-y-auto">
         <div className="max-w-md w-full lg:max-w-full lg:flex m-8 justify-center">
           <div
@@ -87,26 +84,7 @@ export default async function PostPage({ params }) {
                       {tag.tag}
                     </div>
                   ))}
-                  {/* ))
-                  <div className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full">
-                    Tag
-                  </div>
-
-                  <div className="ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-green-200 text-green-700 rounded-full">
-                    Tag
-                  </div>
-
-                  <div className="ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-orange-200 text-orange-700 rounded-full">
-                    Tag
-                  </div>
-
-                  <div className="ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-red-200 text-red-700 rounded-full">
-                    Tag
-                  </div>
-
-                  <div className="ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full bg-white text-gray-700 border">
-                    Tag
-                  </div> */}
+              
                 </div>
               </div>
               <div className="text-gray-900 font-bold text-xl mb-2 w-full">
