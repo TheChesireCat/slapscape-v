@@ -1,8 +1,6 @@
 "use server";
 
 import { executeQuery } from "@/app/lib/db";
-// import { put,list, del  } from '@vercel/blob';
-import fs from "fs";
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { getJwtSecretKey, verifyJwtToken } from "@/app/lib/auth";
@@ -10,7 +8,6 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
