@@ -131,3 +131,20 @@ body {
     font-size: 36px;
     margin-left: 50px;
   }
+
+  .comment-list {
+    overflow-y: scroll;
+    height: 100px; /* Default height */
+  }
+  
+  @media (min-width: 768px) { /* Medium devices */
+    .comment-list {
+      height: 100px;
+    }
+  }
+  
+  @media (min-width: 1024px) { /* Large devices */
+    .comment-list {
+      height: 200px;
+    }
+  }

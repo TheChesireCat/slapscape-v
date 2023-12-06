@@ -315,4 +315,28 @@ export async function getPostComments(postId) {
   return result[0][0];
 }
 
+export async function getPostLiked(postId, username) {
+  const result = await executeQuery({
+    query: "SELECT GetPostLiked(?,?) as result",
+    values: [postId, username],
+  });
+  return result[0][0];
+}
 
+export async function addOrRemoveLike(postId, username) {
+  const result = await executeQuery({
+    query: "CALL AddOrRemoveLike(?,?)",
+    values: [postId, username],
+  });
+  revalidatePath("/home/post/[id]");
+  return result[0][0];
+}
+
+
+export async function getTotalLikes(postId) {
+  const result = await executeQuery({
+    query: "CALL GetTotalLikes(?)",
+    values: [postId],
+  });
+  return result[0][0][0];
+}

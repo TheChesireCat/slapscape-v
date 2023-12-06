@@ -201,3 +201,85 @@ BEGIN
     WHERE post_id = p_post_id;
 END //
 DELIMITER ;
+
+-- here on wards
+
+DELIMITER //
+CREATE PROCEDURE GetPostTags(IN p_post_id CHAR(36))
+BEGIN
+    SELECT tag
+    FROM posttags
+    WHERE post_id = p_post_id;
+END //
+DELIMITER 
+
+
+CREATE TABLE comments (
+    post_id CHAR(36) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    comment TEXT NOT NULL,
+    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
+);
+
+DELIMITER //
+CREATE PROCEDURE CreateComment(IN p_post_id CHAR(36), IN p_username VARCHAR(30), IN p_comment TEXT)
+BEGIN
+    INSERT INTO comments (post_id, username, comment) VALUES (p_comment_id, p_post_id, p_username, p_comment);
+    SELECT "Comment created" as result;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetPostComments(IN p_post_id CHAR(36))
+BEGIN
+    SELECT u.username as username, u.user_img as user_img, c.comment as comment, DATE_FORMAT(c.date_created,"%D %b %Y") as date_str
+    FROM comments as c
+    JOIN user as u ON u.username = c.username
+    WHERE post_id = p_post_id
+    ORDER BY c.date_created DESC;
+END //
+DELIMITER ;
+
+CREATE TABLE likes (
+    post_id CHAR(36) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
+)
+
+DELIMITER //
+CREATE PROCEDURE AddOrRemoveLike(IN p_post_id CHAR(36), IN p_username VARCHAR(30))
+BEGIN
+    IF EXISTS (SELECT 1 FROM likes WHERE post_id = p_post_id AND username = p_username) THEN
+        DELETE FROM likes WHERE post_id = p_post_id AND username = p_username;
+        SELECT 'Removed like' as result;
+    ELSE
+        INSERT INTO likes (post_id, username) VALUES (p_post_id, p_username);
+        SELECT 'Added like' as result;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+
+CREATE FUNCTION GetPostLiked(p_post_id CHAR(36), p_username VARCHAR(30))
+RETURNS BOOLEAN
+NOT DETERMINISTIC
+READS SQL DATA
+BEGIN
+    RETURN (SELECT EXISTS (
+        SELECT 1 FROM likes 
+        WHERE post_id = p_post_id AND username = p_username
+    ));
+END //
+
+DELIMITER //
+CREATE PROCEDURE GetTotalLikes(IN p_post_id CHAR(36))
+BEGIN
+    SELECT COUNT(*) as total_likes
+    FROM likes
+    WHERE post_id = p_post_id;
+END //
+DELIMITER ;
