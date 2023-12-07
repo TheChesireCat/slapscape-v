@@ -349,6 +349,7 @@ export async function addComment(prevState,formData) {
     values: [postId, username, comment],
   });
   revalidatePath("/home/post/[id]",'page');
+
 }
 
 
@@ -358,12 +359,12 @@ export async function deleteImage(prevState,formData) {
     query: "CALL DeleteImage(?)",
     values: [imageUrl],
   });
-  revalidatePath("/home/post/[id]/edit",'page');
+  revalidatePath("/home/post/[id]/",'page');
   return result[0][0][0];
 }
 
 export async function updatePostTitle(prevState,formData){
-  console.log(formData);
+  // console.log(formData);
   const title = formData.get("title");
   const postId = formData.get("post_id");
   if (!title) {
@@ -373,7 +374,7 @@ export async function updatePostTitle(prevState,formData){
     query: "CALL UpdatePostTitle(?,?)",
     values: [postId, title],
   });
-  revalidatePath("/home/post/[id]/edit",'page');
+  revalidatePath("/home/post/[id]/",'page');
   return result[0][0];
 }
 
@@ -387,6 +388,6 @@ export async function updatePostDescription(prevState, formData){
     query: "CALL UpdatePostDescription(?,?)",
     values: [postId, description],
   });
-  revalidatePath("/home/post/[id]/edit",'page');
+  revalidatePath("/home/post/[id]/",'page');
   return result[0][0];
 }
