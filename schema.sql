@@ -226,7 +226,7 @@ CREATE TABLE comments (
 DELIMITER //
 CREATE PROCEDURE CreateComment(IN p_post_id CHAR(36), IN p_username VARCHAR(30), IN p_comment TEXT)
 BEGIN
-    INSERT INTO comments (post_id, username, comment) VALUES (p_comment_id, p_post_id, p_username, p_comment);
+    INSERT INTO comments (post_id, username, comment) VALUES (p_post_id, p_username, p_comment);
     SELECT "Comment created" as result;
 END //
 DELIMITER ;
@@ -283,3 +283,40 @@ BEGIN
     WHERE post_id = p_post_id;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeleteImage(IN p_imageUrl VARCHAR(255))
+BEGIN
+    DECLARE postID CHAR(36);
+    DECLARE imageCount INT;
+
+    SELECT post_id INTO postID FROM postimages WHERE imageUrl = p_imageUrl;
+
+    IF postID IS NULL THEN
+        SELECT 'Image not found' AS result;
+    ELSE
+        SELECT COUNT(*) INTO imageCount FROM postimages WHERE post_id = postID;
+        IF imageCount > 1 THEN
+            DELETE FROM postimages WHERE imageUrl = p_imageUrl;
+            SELECT 'Image deleted' AS result;
+        ELSE
+            SELECT 'Cannot delete the only image of the post' AS result;
+        END IF;
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE UpdatePostTitle(IN p_post_id CHAR(36), IN p_title VARCHAR(100))
+BEGIN
+    UPDATE post SET title = p_title WHERE post_id = p_post_id;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE UpdatePostDescription(IN p_post_id CHAR(36), IN p_description TEXT)
+BEGIN
+    UPDATE post SET description = p_description WHERE post_id = p_post_id;
+END //
+DELIMITER ;
+

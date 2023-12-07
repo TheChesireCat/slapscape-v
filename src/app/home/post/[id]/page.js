@@ -16,6 +16,8 @@ import AddLike from "@/app/components/AddLike";
 import { redirect } from "next/navigation";
 import AddComment from "@/app/components/AddComment";
 import { Avatar } from "@mui/material";
+import TemporaryDrawer from "@/app/components/TemporaryDrawer";
+import { Edit } from "lucide-react";
 
 export default async function PostPage({ params }) {
   // console.log("id", params.id);
@@ -30,6 +32,10 @@ export default async function PostPage({ params }) {
   if (!postData[0]) {
     redirect("/404");
   }
+
+  const user_img = postData[0].user_img;
+
+  const isOwner = postData[0].username === username;
 
   // console.log(postData[0]);
 
@@ -81,10 +87,9 @@ export default async function PostPage({ params }) {
                       key={tag.tag}
                       className="text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 bg-blue-200 text-blue-700 rounded-full"
                     >
-                      {tag.tag}
+                      <a href={`/home/tag/${tag.tag}`}>{tag.tag}</a>
                     </div>
                   ))}
-              
                 </div>
               </div>
               <div className="text-gray-900 font-bold text-xl mb-2 w-full">
@@ -102,17 +107,22 @@ export default async function PostPage({ params }) {
                       className="flex comment-item border-t border-gray-200 pt-2"
                     >
                       <div className="flex w-10 h-10 mr-4 justify-items-center">
-                        <Avatar
-                          className="border border-grey-200"
-                          src={comment.user_img}
-                        />
+                        <a href={`/home/user/${comment.username}`}>
+                          {" "}
+                          <Avatar
+                            className="border border-grey-200"
+                            src={comment.user_img}
+                          />
+                        </a>
                       </div>
                       <div>
                         <p className="text-xs text-gray-500">
                           {comment.date_str}
                         </p>
                         <p className="text-sm text-gray-600">
-                          {comment.username}
+                          <a href={`/home/user/${comment.username}`}>
+                            {comment.username}
+                          </a>
                         </p>
                         <p className="text-gray-700">{comment.comment}</p>
                       </div>
@@ -121,21 +131,37 @@ export default async function PostPage({ params }) {
                 </div>
                 <AddComment postId={post_id} username={username} />
               </div>
+
               <div
                 id="user-info-post-bottom"
                 className="flex items-center mt-auto"
               >
+                {isOwner && (
+                  <a href={`/home/post/${post_id}/edit/`}>
+                    <button
+                      type="button"
+                      className="h-10 text-purple-700 border border-purple-700 hover:bg-purple-700 hover:text-purple-200 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:border-purple-500 dark:text-purple-500 dark:hover:text-white dark:focus:ring-purple-800 dark:hover:bg-purple-500"
+                    >
+                      Edit
+                      <Edit className="ml-2" color="#8b5cf6" />
+                    </button>
+                  </a>
+                )}
+
                 <AddLike
                   likeCount={likeCount.total_likes}
                   isLiked={isLiked}
                   postId={post_id}
                   username={username}
                 />
-                <img
-                  className="w-10 h-10 rounded-full mr-4 border border-purple-700 p-1"
-                  src={postData[0].user_img}
-                  alt={postData[0].username}
-                />
+                <a href={`/home/user/${postData[0].username}`}>
+                  <img
+                    className="w-10 h-10 rounded-full mr-4 border border-purple-700 p-1"
+                    src={user_img}
+                    alt={postData[0].username}
+                  />
+                </a>
+
                 <div className="text-sm">
                   <p className="text-gray-900 leading-none">
                     {postData[0].username}
@@ -146,6 +172,7 @@ export default async function PostPage({ params }) {
             </div>
           </div>
         </div>
+        <TemporaryDrawer />
       </div>
     </div>
   );

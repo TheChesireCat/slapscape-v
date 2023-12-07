@@ -1,8 +1,21 @@
 import { getUserData } from "@/app/lib/actions";
 import { CardContent, Typography } from "@mui/material";
+import { cookies } from "next/headers";
+import { verifyJwtToken } from "@/app/lib/auth";
+import { redirect } from "next/navigation";
+import TemporaryDrawer from "@/app/components/TemporaryDrawer";
 
 export default async function UserProfile({ params }) {
   const userdata = await getUserData(params.username);
+
+  const token = cookies().get("AUTH_TOKEN")?.value;
+  const payload = token ? await verifyJwtToken(token) : null;
+  const username = payload?.username;
+
+  // if (username==params.username){
+  //   redirect("/home/user");
+  // }
+
 
   if (userdata[0].result){
     return (
@@ -15,6 +28,7 @@ export default async function UserProfile({ params }) {
   return (
     <div>
       <div className="flex justify-center items-center h-screen bg-gray-100">
+      <TemporaryDrawer />
         <form
           className="bg-white mx-auto rounded-xl px-8 pb-8 pt-8 mb-4 shadow-lg w-full max-w-md"
         >
@@ -67,6 +81,7 @@ export default async function UserProfile({ params }) {
             </CardContent>
           </div>
         </form>
+        
       </div>
 
       {userdata ? JSON.stringify(userdata) : "No user data"}

@@ -12,7 +12,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { LogOutIcon, SidebarIcon, StarIcon, UserIcon } from "lucide-react";
+import { BarChartIcon, GitGraphIcon, Heart, HomeIcon, LogOutIcon, SidebarIcon, StarIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { logout } from "../lib/actions";
 
@@ -43,13 +43,23 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
+      <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <Link href="/home/">
+              <ListItemText primary="Home" />
+            </Link>
+          </ListItemButton>
+        </ListItem>
         <ListItem disablePadding>
           <ListItemButton>
             <ListItemIcon>
-              <StarIcon />
+              <Heart />
             </ListItemIcon>
-            <Link href="/home/saved">
-              <ListItemText primary="Saved" />
+            <Link href="/home/liked">
+              <ListItemText primary="Liked" />
             </Link>
           </ListItemButton>
         </ListItem>
@@ -59,7 +69,17 @@ export default function TemporaryDrawer() {
               <UserIcon />
             </ListItemIcon>
             <Link href="/home/user">
-              <ListItemText primary="User Profile" />
+              <ListItemText primary="Edit Your Profile" />
+            </Link>
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton>
+            <ListItemIcon>
+              <BarChartIcon />
+            </ListItemIcon>
+            <Link href="/home/visualizations">
+              <ListItemText primary="Visualizations" />
             </Link>
           </ListItemButton>
         </ListItem>

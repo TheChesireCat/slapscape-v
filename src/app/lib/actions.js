@@ -350,3 +350,43 @@ export async function addComment(prevState,formData) {
   });
   revalidatePath("/home/post/[id]",'page');
 }
+
+
+export async function deleteImage(prevState,formData) {
+  const imageUrl = formData.get("image");
+  const result = await executeQuery({
+    query: "CALL DeleteImage(?)",
+    values: [imageUrl],
+  });
+  revalidatePath("/home/post/[id]/edit",'page');
+  return result[0][0][0];
+}
+
+export async function updatePostTitle(prevState,formData){
+  console.log(formData);
+  const title = formData.get("title");
+  const postId = formData.get("post_id");
+  if (!title) {
+    return { error: "* Title cannot be empty" };
+  }
+  const result = await executeQuery({
+    query: "CALL UpdatePostTitle(?,?)",
+    values: [postId, title],
+  });
+  revalidatePath("/home/post/[id]/edit",'page');
+  return result[0][0];
+}
+
+export async function updatePostDescription(prevState, formData){
+  const description = formData.get("description");
+  const postId = formData.get("post_id");
+  if (!description) {
+    return { error: "* Description cannot be empty" };
+  }
+  const result = await executeQuery({
+    query: "CALL UpdatePostDescription(?,?)",
+    values: [postId, description],
+  });
+  revalidatePath("/home/post/[id]/edit",'page');
+  return result[0][0];
+}
