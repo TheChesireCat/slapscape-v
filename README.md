@@ -1,52 +1,113 @@
 # Ibrahim Abbas and Ankit's CS5200 Project
 
-This is a nextjs project which uses mysql as a backend to store geolocated images and enables users to like or comment on them. 
+This application is a tool for cataloguing and sharing urban sticker art. Users can create, view, edit, and delete their profiles. They can make posts associated with a location, a title, multiple tags (tags can be created if they do not exist), a description, and multiple images (each with an editable caption). The User associated with a post can delete the post. Individual Images can be deleted from a post. Users can like, and comment on other User’s posts. Likes and saves can be deleted. Comments can be edited or deleted. The platform additionally supports searching posts by text, distance, tags, and popularity. 
 
-Clone the repo and run `npm install` to install all the dependencies.
+## Installing and Ensuring Dependencies
 
-Run it with `npm run dev` and open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
++ Install NodeJS - https://nodejs.org/en. Use `node -v` to check version, this should return v20+
++ Navigate to the project directory `slapscape` with the `package.json` file. This file contains the dependencies for the project.
++ Run `npm install` in this directory to install all the dependencies. This will create a `node_modules` folder in the project directory.
++ The correct `nextjs` and `mysql2` versions will be installed according to the specifications in the `package.json` file.
++ Other libraries such as `leaflet`, `react-leaflet`, `mui` will also be installed.
 
-schema setup is provided in `schema.sql` file.
+## Running the Project
 
-Ensure v20+ NodeJS
-Ensure v8.0.28+ MySQL
-Connector - "mysql2" 3.6.5+
-NextJs version 14.0.4+
++ Ensure that your MySQL server is  running
++ Import the dump from the zip file attached to the submission. The file is called `Projectibrahimramakrishnandump.sql`, A backup non-dump schema without data is also provided in `schema.sql`.
++ This should create a database named `slapscape` with the correct tables and data.
++ Navigate to the project directory `slapscape` with the `package.json` file. There should be a file called `.env.local` in this directory. It contains the environment variables for the project. **Ensure that the values are correct for your MySQL server**. Additional variables are used to secure the session cookie, and to set the AWS S3 bucket name and credentials.
 
++ Once the dependencies are installed, run `npm run dev` to start the project. This will start the server on `localhost:3000`. Open this in your browser to view the project.
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
++ **Note** : Running in dev mode means routes are compiled when requested. Upon first load the application **will take time** to load resource heavy pages such as the map view. However, on subsequent visits this will be faster as the routes will be cached.
 
-## Getting Started
++ **Note** : To add posts the application uses the browser's navigation api to request latitude and longitude. Please make sure to **"Allow Location Access"** when prompted by the browser. This is required to fetch current location.
 
-First, run the development server:
++ **Note** : For faster experience, you can run `npm run build && npm run start` to build the project and then run it. This will compile all the routes and pages and will be faster on first load. However, this will take time to build the project.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Project Structure
+
++ The application source is located in the `/src` directory in the project and contains `middleware.js` and `/app` directory. 
++ The `/app` directory contains all the pages and components for the application. 
++ The `/app/api` directory contains internal routes for the application. 
++ The `/app/lib` directory contains the database connection and utility functions. A file of note is `actions.js`, this contains all the queries used in the application. These are mostly remote procedure calls to the database.
++ The `/app/components` directory contains all the components used in the application.
++ The `/app/home` directory contains the home page and its subpages which are the main pages of the application.
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+├── src
+│   ├── app
+│   │   ├── api
+│   │   │   ├── markers
+│   │   │   │   └── route.js
+│   │   │   ├── tagCreate
+│   │   │   │   └── route.js
+│   │   │   └── tagList
+│   │   │       └── route.js
+│   │   ├── components
+│   │   │   ├── AddComment.js
+│   │   │   ├── AddLike.js
+│   │   │   ├── Charts.js
+│   │   │   ├── DeleteImage.js
+│   │   │   ├── DeletePost.js
+│   │   │   ├── EditDescription.js
+│   │   │   ├── EditTitle.js
+│   │   │   ├── LikedPosts.js
+│   │   │   ├── Login.js
+│   │   │   ├── Map.js
+│   │   │   ├── MapBasic.js
+│   │   │   ├── ModalTest.js
+│   │   │   ├── NewPost.js
+│   │   │   ├── PaginationTags.js
+│   │   │   ├── PieChart.js
+│   │   │   ├── QueryPosts.js
+│   │   │   ├── Register.js
+│   │   │   ├── Sidebar.js
+│   │   │   ├── TagPosts.js
+│   │   │   ├── TemporaryDrawer.js
+│   │   │   ├── Test.js
+│   │   │   ├── User.js
+│   │   │   ├── UserPosts.js
+│   │   │   ├── ViewPost.js
+│   │   │   └── ui
+│   │   │       ├── button.js
+│   │   │       └── card.jsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── home
+│   │   │   ├── liked
+│   │   │   │   └── page.js
+│   │   │   ├── newpost
+│   │   │   │   └── page.js
+│   │   │   ├── page.js
+│   │   │   ├── post
+│   │   │   │   └── [id]
+│   │   │   │       ├── edit
+│   │   │   │       │   └── page.js
+│   │   │   │       └── page.js
+│   │   │   ├── search
+│   │   │   │   └── page.js
+│   │   │   ├── tag
+│   │   │   │   └── [id]
+│   │   │   │       └── page.js
+│   │   │   ├── user
+│   │   │   │   ├── [username]
+│   │   │   │   │   └── page.js
+│   │   │   │   └── page.js
+│   │   │   └── visualizations
+│   │   │       └── page.js
+│   │   ├── layout.js
+│   │   ├── lib
+│   │   │   ├── actions.js
+│   │   │   ├── auth.js
+│   │   │   ├── db.js
+│   │   │   └── utils.js
+│   │   ├── login
+│   │   │   └── page.js
+│   │   ├── logout
+│   │   │   └── route.js
+│   │   ├── page.js
+│   │   └── register
+│   │       └── page.js
+│   └── middleware.js
+```
