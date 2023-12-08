@@ -470,3 +470,13 @@ export async function getPostsByQuery(query,page,postsPerPage){
   });
   return result[0][0];
 }
+
+export async function deletePost(formData){
+  const postId = formData.get("post_id");
+  // console.log(postId);
+  const result = await executeQuery({
+    query: "CALL DeletePost(?)",
+    values: [postId],
+  });
+  redirect("/home");
+}

@@ -2,12 +2,11 @@ import { verifyJwtToken } from "@/app/lib/auth";
 import { cookies } from "next/headers";
 import { getPostInfo, getPostImages } from "@/app/lib/actions";
 import { redirect } from "next/navigation";
-import { CrossIcon, DeleteIcon } from "lucide-react";
-import { RemoveCircleOutline } from "@mui/icons-material";
 import TemporaryDrawer from "@/app/components/TemporaryDrawer";
 import DeleteImage from "@/app/components/DeleteImage";
 import  EditTitle from "@/app/components/EditTitle";
 import EditDescription from "@/app/components/EditDescription";
+import DeletePost from "@/app/components/DeletePost";
 
 export default async function EditPostPage({ params }) {
   const post_id = params.id;
@@ -67,6 +66,10 @@ export default async function EditPostPage({ params }) {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="flex justify-end">
+            <DeletePost postId={post_id}/>
           </div>
         </div>
       </div>

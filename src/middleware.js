@@ -34,15 +34,15 @@ export async function middleware(request) {
   const hasVerifiedToken = token && (await verifyJwtToken(token));
   const isAuthPageRequested = isAuthPages(nextUrl.pathname);
 
-  if (isAuthPageRequested) {
-    if (!hasVerifiedToken) {
-      const response = NextResponse.next();
-      response.cookies.delete("AUTH_TOKEN");
-      return response;
-    }
-    const response = NextResponse.redirect(new URL(`/home`, url));
-    return response;
-  }
+  // if (isAuthPageRequested) {
+  //   if (!hasVerifiedToken) {
+  //     const response = NextResponse.next();
+  //     response.cookies.delete("AUTH_TOKEN");
+  //     return response;
+  //   }
+  //   const response = NextResponse.redirect(new URL(`/home`, url));
+  //   return response;
+  // }
 
   if (!hasVerifiedToken) {
     // const searchParams = new URLSearchParams(nextUrl.searchParams);
@@ -57,5 +57,5 @@ export async function middleware(request) {
   return NextResponse.next();
 
 }
-export const config = { matcher: ["/login", "/home/:path*"] };
-// export const config = { matcher: ["/login", "/home/:path*","/api/:path*"] };
+// export const config = { matcher: ["/login", "/home/:path*"] };
+export const config = { matcher: [ "/home/:path*","/api/:path*"] };

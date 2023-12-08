@@ -419,3 +419,25 @@ BEGIN
     LIMIT p_page, p_posts_per_page;
 END //
 DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE DeletePost(IN p_post_id CHAR(36))
+BEGIN
+    DELETE FROM post WHERE post_id = p_post_id;
+END //
+DELIMITER ;
+
+CREATE TABLE state (
+    state_name VARCHAR(30) PRIMARY KEY,
+    state_polygon POLYGON,
+    UNIQUE(state_name)
+);
+
+CREATE TABLE zipcode (
+    zipcode_num CHAR(5) NOT NULL PRIMARY KEY,
+    state_name VARCHAR(30),
+    zipcode_polygon POLYGON,
+    city_name VARCHAR(50),
+    FOREIGN KEY (state_name) REFERENCES State(state_name) ON DELETE CASCADE
+);
+

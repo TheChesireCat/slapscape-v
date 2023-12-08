@@ -208,7 +208,7 @@ export default function Map() {
   };
 
   useEffect(() => {
-    console.log("GeoData changed:", geoData);
+    // console.log("GeoData changed:", geoData);
   }, [geoData]);
 
   const center = [geoData.lat, geoData.lng];

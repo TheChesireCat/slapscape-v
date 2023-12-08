@@ -2,6 +2,7 @@ import { Pagination } from "@mui/material";
 import { getTotalPostsWithTag } from "@/app/lib/actions";
 import PaginationTags from "@/app/components/PaginationTags";
 import TagPosts from "@/app/components/TagPosts";
+import TemporaryDrawer from "@/app/components/TemporaryDrawer";
 export default async function TagPostPage({ searchParams, params }) {
   const pageNumber = searchParams?.page || 1;
   const total = await getTotalPostsWithTag(params.id);
@@ -11,6 +12,7 @@ export default async function TagPostPage({ searchParams, params }) {
   return (
     <div>
       <div className="flex justify-center items-center h-screen bg-gray-100">
+        <TemporaryDrawer/>
         <div
           className="input-shadow flex flex-col justify-between rounded-lg border-gray-400 bg-white m-8 p-4 w-full max-w-4xl"
           style={{ minHeight: "500px" }}

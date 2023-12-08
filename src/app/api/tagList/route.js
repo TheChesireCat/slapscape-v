@@ -3,7 +3,7 @@ import { getAllTags } from '@/app/lib/actions';
 export async function GET() {
     try {
       const tags = await getAllTags();
-      console.log('tags', tags);
+      // console.log('tags', tags);
       return new Response(JSON.stringify(tags.map(obj => obj.tag)
       ), {
         headers: {
