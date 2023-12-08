@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation'
 
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
@@ -19,6 +20,7 @@ import TemporaryDrawer from "./TemporaryDrawer";
 import { CameraIcon, SearchIcon } from "lucide-react";
 import { Icon } from "leaflet";
 import { Snackbar, Alert } from "@mui/material";
+import { redirect } from "next/navigation";
 
 const myLocation = new Icon({
   iconUrl: "https://img.icons8.com/fluency/48/region-code.png",
@@ -102,6 +104,7 @@ function GetBounds() {
 
   const ne_ = map.getBounds().getNorthEast();
   const sw_ = map.getBounds().getSouthWest();
+
 
   return (
     <div>
@@ -210,6 +213,22 @@ export default function Map() {
 
   const center = [geoData.lat, geoData.lng];
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+
+  const  handleClick = () => {
+    if (searchQuery) {
+      router.push(`/home/search?q=${searchQuery}`);
+    }
+  };
+
+  
+
+  // useEffect(() => {
+  //   console.log("Search query changed:", searchQuery);
+  // }, [searchQuery]);
+
+
   return (
     <div>
       <div>
@@ -230,14 +249,18 @@ export default function Map() {
           </Link>
           <input
             type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            name="search"
             placeholder="Search"
             className="w-100 p-4 border border-gray-300 rounded-xl mt-1 bg-white input-shadow focus:outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 m-2"
           />
           <button
             type="button"
+            onClick={handleClick}
             className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
-            <SearchIcon />
+            <SearchIcon/>
           </button>
         </form>
       </div>

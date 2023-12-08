@@ -396,3 +396,26 @@ BEGIN
     GROUP BY tag;
 END //
 DELIMITER ;
+
+-- search posts by title and description text search by "query" text, count of total
+-- GetTotalPostsByQuery
+DELIMITER //
+CREATE PROCEDURE GetTotalPostsByQuery(IN p_query TEXT)
+BEGIN
+    SELECT COUNT(*) as total_posts
+    FROM post
+    WHERE LOWER(title) LIKE CONCAT('%', LOWER(p_query), '%') OR LOWER(description) LIKE CONCAT('%', LOWER(p_query), '%');
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetPostsByQuery(IN p_query TEXT, IN p_page INT, IN p_posts_per_page INT)
+BEGIN
+    SELECT p.post_id, DATE_FORMAT(p.date_created,"%D %b %Y") as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
+    FROM post as p
+    JOIN user as u ON p.username = u.username
+    WHERE LOWER(p.title) LIKE CONCAT('%', LOWER(p_query), '%') OR LOWER(p.description) LIKE CONCAT('%', LOWER(p_query), '%')
+    ORDER BY p.date_created DESC
+    LIMIT p_page, p_posts_per_page;
+END //
+DELIMITER ;

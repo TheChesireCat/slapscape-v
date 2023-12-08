@@ -10,10 +10,6 @@ const MapWithNoSSR = dynamic(() => import("@/app/components/Map"), {
   ssr: false,
 });
 
-const SidebarWithNoSSR = dynamic(() => import("@/app/components/Sidebar"), {
-  ssr: false,
-});
-
 export default async function Home() {
   async function logout() {
     "use server";

@@ -453,3 +453,20 @@ export async function getPostsPerTag(){
   });
   return result[0][0];
 }
+
+export async function getTotalPostsByQuery(query){
+  const result = await executeQuery({
+    query: "CALL GetTotalPostsByQuery(?)",
+    values: [query],
+  });
+  return result[0][0][0];
+}
+
+export async function getPostsByQuery(query,page,postsPerPage){
+  const start = (page - 1) * postsPerPage;
+  const result = await executeQuery({
+    query: "CALL GetPostsByQuery(?,?,?)",
+    values: [query,start,postsPerPage],
+  });
+  return result[0][0];
+}
