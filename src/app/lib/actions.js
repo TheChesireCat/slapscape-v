@@ -480,3 +480,24 @@ export async function deletePost(formData){
   });
   redirect("/home");
 }
+
+export async function getTotalPosts(){
+  const result = await executeQuery({
+    query: "CALL GetTotalPosts()",
+  });
+  return result[0][0][0];
+}
+
+export async function getTotalUsers(){
+  const result = await executeQuery({
+    query: "CALL GetTotalUsers()",
+  });
+  return result[0][0][0];
+}
+
+export async function getTotalImages(){
+  const result = await executeQuery({
+    query: "CALL GetTotalImages()",
+  });
+  return result[0][0][0];
+}

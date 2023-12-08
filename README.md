@@ -8,6 +8,11 @@ Run it with `npm run dev` and open [http://localhost:3000](http://localhost:3000
 
 schema setup is provided in `schema.sql` file.
 
+Ensure v20+ NodeJS
+Ensure v8.0.28+ MySQL
+Connector - "mysql2" 3.6.5+
+NextJs version 14.0.4+
+
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

@@ -1,6 +1,20 @@
-DROP SCHEMA slapscape;
+DROP DATABASE IF EXISTS slapscape;
 CREATE DATABASE IF NOT EXISTS slapscape;
 USE slapscape;
+
+CREATE TABLE state (
+    state_name VARCHAR(30) PRIMARY KEY,
+    state_polygon POLYGON,
+    UNIQUE(state_name)
+);
+
+CREATE TABLE zipcode (
+    zipcode_num CHAR(5) NOT NULL PRIMARY KEY,
+    state_name VARCHAR(30),
+    zipcode_polygon POLYGON,
+    city_name VARCHAR(50),
+    FOREIGN KEY (state_name) REFERENCES state(state_name) ON DELETE CASCADE
+);
 
 CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
@@ -17,9 +31,12 @@ CREATE TABLE post (
     description TEXT,
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
     coordinates POINT NOT NULL,
+    zipcode CHAR(5),
     UNIQUE(post_id),
+    FOREIGN KEY (zipcode) REFERENCES zipcode(zipcode_num) ON DELETE SET NULL,
     FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
 );
+
 
 CREATE TABLE postimages (
     imageUrl VARCHAR(255),
@@ -41,6 +58,23 @@ CREATE TABLE posttags (
     tag VARCHAR(20),
     FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
     FOREIGN KEY (tag) REFERENCES tags(tag)
+);
+
+
+CREATE TABLE comments (
+    post_id CHAR(36) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    comment TEXT NOT NULL,
+    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
+);
+
+CREATE TABLE likes (
+    post_id CHAR(36) NOT NULL,
+    username VARCHAR(30) NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
 );
 
 
@@ -202,7 +236,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- here on wards
 
 DELIMITER //
 CREATE PROCEDURE GetPostTags(IN p_post_id CHAR(36))
@@ -211,17 +244,9 @@ BEGIN
     FROM posttags
     WHERE post_id = p_post_id;
 END //
-DELIMITER 
+DELIMITER ;
 
 
-CREATE TABLE comments (
-    post_id CHAR(36) NOT NULL,
-    username VARCHAR(30) NOT NULL,
-    comment TEXT NOT NULL,
-    date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
-    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
-);
 
 DELIMITER //
 CREATE PROCEDURE CreateComment(IN p_post_id CHAR(36), IN p_username VARCHAR(30), IN p_comment TEXT)
@@ -242,12 +267,7 @@ BEGIN
 END //
 DELIMITER ;
 
-CREATE TABLE likes (
-    post_id CHAR(36) NOT NULL,
-    username VARCHAR(30) NOT NULL,
-    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
-    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
-)
+
 
 DELIMITER //
 CREATE PROCEDURE AddOrRemoveLike(IN p_post_id CHAR(36), IN p_username VARCHAR(30))
@@ -397,8 +417,7 @@ BEGIN
 END //
 DELIMITER ;
 
--- search posts by title and description text search by "query" text, count of total
--- GetTotalPostsByQuery
+
 DELIMITER //
 CREATE PROCEDURE GetTotalPostsByQuery(IN p_query TEXT)
 BEGIN
@@ -427,25 +446,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CREATE TABLE state (
-    state_name VARCHAR(30) PRIMARY KEY,
-    state_polygon POLYGON,
-    UNIQUE(state_name)
-);
-
-CREATE TABLE zipcode (
-    zipcode_num CHAR(5) NOT NULL PRIMARY KEY,
-    state_name VARCHAR(30),
-    zipcode_polygon POLYGON,
-    city_name VARCHAR(50),
-    FOREIGN KEY (state_name) REFERENCES State(state_name) ON DELETE CASCADE
-);
-
-
-ALTER TABLE post
-ADD COLUMN zipcode CHAR(5),
-ADD FOREIGN KEY (zipcode) REFERENCES zipcode(zipcode_num);
-
 DELIMITER //
 CREATE TRIGGER SetPostZipcode
 BEFORE INSERT ON post
@@ -465,3 +465,26 @@ BEGIN
 END//
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE GetTotalPosts()
+BEGIN
+    SELECT COUNT(*) as total_posts
+    FROM post;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetTotalUsers()
+BEGIN
+    SELECT COUNT(*) as total_users
+    FROM user;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetTotalImages()
+BEGIN
+    SELECT COUNT(*) as total_images
+    FROM postimages;
+END //
+DELIMITER ;
