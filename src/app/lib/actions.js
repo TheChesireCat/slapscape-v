@@ -428,3 +428,21 @@ export async function getPostsByUser(username,page,postsPerPage) {
   });
   return result[0][0];
 }
+
+
+export async function getTotalPostsLikedByUser(username) {
+  const result = await executeQuery({
+    query: "CALL GetTotalPostsLikedByUser(?)",
+    values: [username],
+  });
+  return result[0][0][0];
+}
+
+export async function getPostsLikedByUser(username,page,postsPerPage) {
+  const start = (page - 1) * postsPerPage;
+  const result = await executeQuery({
+    query: "CALL GetPostsLikedByUser(?,?,?)",
+    values: [username,start,postsPerPage],
+  });
+  return result[0][0];
+}

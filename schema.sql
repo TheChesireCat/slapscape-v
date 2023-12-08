@@ -363,3 +363,26 @@ BEGIN
     LIMIT p_page, p_posts_per_page;
 END //
 DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE GetTotalPostsLikedByUser(IN p_username VARCHAR(30))
+BEGIN
+    SELECT COUNT(*) as total_posts
+    FROM likes
+    WHERE username = p_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetPostsLikedByUser(IN p_username VARCHAR(30), IN p_page INT, IN p_posts_per_page INT)
+BEGIN
+    SELECT p.post_id, DATE_FORMAT(p.date_created,"%D %b %Y") as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
+    FROM post as p
+    JOIN likes as l ON p.post_id = l.post_id
+    JOIN user as u ON p.username = u.username
+    WHERE l.username = p_username
+    ORDER BY p.date_created DESC
+    LIMIT p_page, p_posts_per_page;
+END //
+DELIMITER ;
