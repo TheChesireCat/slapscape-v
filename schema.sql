@@ -1,6 +1,6 @@
-DROP SCHEMA test_2;
-CREATE DATABASE IF NOT EXISTS test_2;
-USE test_2;
+DROP SCHEMA slapscape;
+CREATE DATABASE IF NOT EXISTS slapscape;
+USE slapscape;
 
 CREATE TABLE user (
 	username varchar(30) PRIMARY KEY,
@@ -440,4 +440,28 @@ CREATE TABLE zipcode (
     city_name VARCHAR(50),
     FOREIGN KEY (state_name) REFERENCES State(state_name) ON DELETE CASCADE
 );
+
+
+ALTER TABLE post
+ADD COLUMN zipcode CHAR(5),
+ADD FOREIGN KEY (zipcode) REFERENCES zipcode(zipcode_num);
+
+DELIMITER //
+CREATE TRIGGER SetPostZipcode
+BEFORE INSERT ON post
+FOR EACH ROW
+BEGIN
+    DECLARE foundZip CHAR(5);
+
+    SELECT zipcode_num INTO foundZip
+    FROM zipcode
+    WHERE ST_Contains(zipcode_polygon, NEW.coordinates);
+
+    IF foundZip IS NOT NULL THEN
+        SET NEW.zipcode = foundZip;
+    ELSE
+        SET NEW.zipcode = NULL;
+    END IF;
+END//
+DELIMITER ;
 
