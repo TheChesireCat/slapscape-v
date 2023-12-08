@@ -111,3 +111,59 @@ This application is a tool for cataloguing and sharing urban sticker art. Users 
 │   │       └── page.js
 │   └── middleware.js
 ```
+
+## Instructions to use the application
+ 
+The app will open to the login/register splash screen.
+ 
+## Splash screen
+ 
+Select the login if you already have credentials or register button if you need to create a new account.
+ 
+### Register
+ 
+The register screen will allow you to enter a username and password. Once you click the register button, the app will attempt to register the user. If the user is successfully registered, the app will present the [login screen](#login). If the user is not successfully registered, the app will display an error message.
+ 
+### Login
+ 
+The login screen will allow you to enter a username and password. Once you click the login button, the app will attempt to login the user. If the user is successfully logged in, the app will present the [main screen](#main-screen). If the user is not successfully logged in, the app will display an error message.
+ 
+## Main screen
+ 
+The main screen will display a map with all the posts in the database. The posts will be displayed as markers on the map.
+ 
+- On Clicking any of the markers, you will be presented with a new page with the post details.
+- By dragging the purple marker around, and clicking on the camera icon in the top center of the screen,
+you will be taken to create post screen.
+    - On the create post screen, you will be able to:
+        - Enter a title and description for the post
+        - Add images to the post
+        - Add tags to the post
+        - Submit the post
+- By using the search bar in the top center of the screen, you will be able to search for posts containing the search term in the title.
+- On any post, you will be able to:
+    - View the images belonging to the post
+    - View the comments on the post
+    - View the number of likes on the post
+    - Like the post
+    - Comment on the post
+    - Edit the post (if you are the owner of the post)
+        - The edit screen will allow you to edit the title and description of the post
+        - Delete images from the post
+        - Delete the post
+- On the sidebar menu on the left, you will be able to:
+    - View your profile
+        - On the profile page, you will be able to view your posts
+        - You will be able to edit your profile
+            On the edit profile page:
+            - You will be able to edit your username and password
+            - You will be able to add/change your profile picture
+            - You will be able to delete your account
+    - View liked posts
+    - Navigate to the visualization screen
+        - Visualization screen will display the following:
+            - A pie chart of the number of posts per tag
+            - Total number of posts
+            - Total number of users
+            - Total number of Images
+    - Logout
