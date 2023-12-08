@@ -12,9 +12,17 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { BarChartIcon, GitGraphIcon, Heart, HomeIcon, LogOutIcon, SidebarIcon, StarIcon, UserIcon } from "lucide-react";
+import {
+  BarChartIcon,
+  GitGraphIcon,
+  Heart,
+  HomeIcon,
+  LogOutIcon,
+  SidebarIcon,
+  StarIcon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { logout } from "../lib/actions";
 
 export default function TemporaryDrawer() {
   const [state, setState] = React.useState({
@@ -43,56 +51,56 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-      <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <Link href="/home/">
+        <Link href="/home/">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
               <ListItemText primary="Home" />
-            </Link>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <Heart />
-            </ListItemIcon>
-            <Link href="/home/liked">
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link href="/home/liked">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Heart />
+              </ListItemIcon>
               <ListItemText primary="Liked" />
-            </Link>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <UserIcon />
-            </ListItemIcon>
-            <Link href="/home/user">
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link href="/home/user">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <UserIcon />
+              </ListItemIcon>
               <ListItemText primary="Edit Your Profile" />
-            </Link>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <Link href="/home/visualizations">
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link href="/home/visualizations">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <BarChartIcon />
+              </ListItemIcon>
               <ListItemText primary="Visualizations" />
-            </Link>
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <LogOutIcon />
-            </ListItemIcon>
-            <Link href="/logout">
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link href="/logout">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <LogOutIcon />
+              </ListItemIcon>
               <ListItemText primary="Logout" />
-            </Link>
-          </ListItemButton>
-        </ListItem>
+            </ListItemButton>
+          </ListItem>
+        </Link>
       </List>
     </Box>
   );
@@ -105,7 +113,6 @@ export default function TemporaryDrawer() {
       >
         <SidebarIcon />
       </button>
-      {/* <Button onClick={toggleDrawer('left', true)}>{'left'}</Button> */}
       <Drawer
         anchor={"left"}
         open={state["left"]}

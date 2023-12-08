@@ -4,6 +4,8 @@ import { updateUserData, del, deleteUser } from "@/app/lib/actions";
 import { Button } from "@/app/components/ui/button";
 import { useFormState, useFormStatus } from "react-dom";
 import Link from "next/link";
+import { View, ViewIcon } from "lucide-react";
+import { Visibility } from "@mui/icons-material";
 
 const initialState = {
   error: null,
@@ -23,7 +25,12 @@ export default function User({ userdata }) {
           <h1 className="text-xl font-bold text-center mb-6">
             Update Your Profile
           </h1>
-          <input hidden id="username" name="username" defaultValue={userdata.username} />
+          <input
+            hidden
+            id="username"
+            name="username"
+            defaultValue={userdata.username}
+          />
           <div id="title-new-post" className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -89,29 +96,36 @@ export default function User({ userdata }) {
             ></textarea>
           </div>
           <div className="flex justify-center gap-4 mb-4">
-          <Button
-            type="submit"
-            className="w-1/3 bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
-          >
-            Update
-          </Button>
-          <Button
-            type="button"
-            onClick={() => deleteUser(userdata.username)}
-            className=" bg-red-800 text-white p-4 rounded-xl button-shadow hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-50"
-          >
-            Delete Account
-          </Button>
-          <Button
-            type="button"
-
-            className=" bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
-          >
-            <Link href="/home">Home</Link>
-          </Button>
+            <Button
+              type="submit"
+              className="w-1/3 bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+            >
+              Update
+            </Button>
+            <Button
+              type="button"
+              onClick={() => deleteUser(userdata.username)}
+              className=" bg-red-800 text-white p-4 rounded-xl button-shadow hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-50"
+            >
+              Delete Account
+            </Button>
+            <Link href="/home">
+              <Button
+                type="button"
+                className=" bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+              >
+                Home
+              </Button>
+            </Link>
+            <Link href={`/home/user/${userdata.username}`}>
+              <Button
+                type="button"
+                className=" bg-gray-800 text-white p-4 rounded-xl button-shadow hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50"
+              >
+                <Visibility /> View
+              </Button>
+            </Link>
           </div>
-          
-
         </form>
       </div>
 

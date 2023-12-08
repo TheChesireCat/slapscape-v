@@ -391,3 +391,40 @@ export async function updatePostDescription(prevState, formData){
   revalidatePath("/home/post/[id]/",'page');
   return result[0][0];
 }
+
+export async function getTotalPostsWithTag(tagId) {
+  const result = await executeQuery({
+    query: "CALL GetTotalPostsWithTag(?)",
+    values: [tagId],
+  });
+  return result[0][0][0];
+}
+
+export async function getPostsByTag(tagId,page,postsPerPage) {
+  const start = (page - 1) * postsPerPage;
+  const result = await executeQuery({
+    query: "CALL GetPostsByTag(?,?,?)",
+    values: [tagId,start,postsPerPage],
+  });
+  return result[0][0];
+}
+
+
+
+export async function getTotalPostsByUser(username) {
+  const result = await executeQuery({
+    query: "CALL GetTotalPostsByUser(?)",
+    values: [username],
+  });
+  return result[0][0][0];
+}
+
+
+export async function getPostsByUser(username,page,postsPerPage) {
+  const start = (page - 1) * postsPerPage;
+  const result = await executeQuery({
+    query: "CALL GetPostsByUser(?,?,?)",
+    values: [username,start,postsPerPage],
+  });
+  return result[0][0];
+}

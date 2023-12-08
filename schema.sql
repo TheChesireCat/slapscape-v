@@ -320,3 +320,46 @@ BEGIN
 END //
 DELIMITER ;
 
+DELIMITER //
+CREATE PROCEDURE GetTotalPostsWithTag(IN p_tag VARCHAR(20))
+BEGIN
+    SELECT COUNT(*) as total_posts
+    FROM posttags
+    WHERE tag = p_tag;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetPostsByTag(IN p_tag VARCHAR(20), IN p_page INT, IN p_posts_per_page INT)
+BEGIN
+    SELECT p.post_id, DATE_FORMAT(p.date_created,"%D %b %Y") as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
+    FROM post as p
+    JOIN posttags as pt ON p.post_id = pt.post_id
+    JOIN user as u ON p.username = u.username
+    WHERE pt.tag = p_tag
+    ORDER BY p.date_created DESC
+    LIMIT p_page, p_posts_per_page;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE PROCEDURE GetTotalPostsByUser(IN p_username VARCHAR(30))
+BEGIN
+    SELECT COUNT(*) as total_posts
+    FROM post
+    WHERE username = p_username;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE PROCEDURE GetPostsByUser(IN p_username VARCHAR(30), IN p_page INT, IN p_posts_per_page INT)
+BEGIN
+    SELECT p.post_id, DATE_FORMAT(p.date_created,"%D %b %Y") as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
+    FROM post as p
+    JOIN user as u ON p.username = u.username
+    WHERE p.username = p_username
+    ORDER BY p.date_created DESC
+    LIMIT p_page, p_posts_per_page;
+END //
+DELIMITER ;
