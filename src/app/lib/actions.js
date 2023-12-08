@@ -375,7 +375,7 @@ export async function updatePostTitle(prevState,formData){
     values: [postId, title],
   });
   revalidatePath("/home/post/[id]/",'page');
-  return result[0][0];
+  return { result: "Edit successful" };
 }
 
 export async function updatePostDescription(prevState, formData){
@@ -389,7 +389,7 @@ export async function updatePostDescription(prevState, formData){
     values: [postId, description],
   });
   revalidatePath("/home/post/[id]/",'page');
-  return result[0][0];
+  return { result: "Edit successful" };
 }
 
 export async function getTotalPostsWithTag(tagId) {
