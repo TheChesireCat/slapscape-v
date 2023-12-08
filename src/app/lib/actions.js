@@ -446,3 +446,10 @@ export async function getPostsLikedByUser(username,page,postsPerPage) {
   });
   return result[0][0];
 }
+
+export async function getPostsPerTag(){
+  const result = await executeQuery({
+    query: "CALL GetPostsPerTag()",
+  });
+  return result[0][0];
+}

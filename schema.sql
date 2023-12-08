@@ -386,3 +386,13 @@ BEGIN
     LIMIT p_page, p_posts_per_page;
 END //
 DELIMITER ;
+
+-- return number of posts per tag
+DELIMITER //
+CREATE PROCEDURE GetPostsPerTag()
+BEGIN
+    SELECT tag, COUNT(*) as total_posts
+    FROM posttags
+    GROUP BY tag;
+END //
+DELIMITER ;
