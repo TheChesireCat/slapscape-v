@@ -13,9 +13,9 @@ This application is a tool for cataloguing and sharing urban sticker art. Users 
 ## Running the Project
 
 + Ensure that your MySQL server is  running
-+ Import the dump from the zip file attached to the submission. The file is called `Projectibrahimramakrishnandump.sql`, A backup non-dump schema without data is also provided in `schema.sql`.
++ Import the dump from the zip file attached to the submission. The file is called `dump-slapscape-202312081819.sql`, A backup non-dump schema without data is also provided in `schema.sql`.
 + This should create a database named `slapscape` with the correct tables and data.
-+ Navigate to the project directory `slapscape` with the `package.json` file. There should be a file called `.env.local` in this directory. It contains the environment variables for the project. **Ensure that the values are correct for your MySQL server**. Additional variables are used to secure the session cookie, and to set the AWS S3 bucket name and credentials.
++ **IMPORTANT** Make sure you are in the directory with the `package.json` file. There should be a file called `.env.local` in this directory. It contains the environment variables for the project. **Ensure that the values are correct for your MySQL server**, change DB_PASSWORD etc. Additional variables are used to secure the session cookie, and to set the AWS S3 bucket name and credentials.
 
 + Once the dependencies are installed, run `npm run dev` to start the project. This will start the server on `localhost:3000`. Open this in your browser to view the project.
 
