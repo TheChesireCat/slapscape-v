@@ -50,8 +50,17 @@ export async function loginUser(prevState, formData) {
   if (!result[0][0][0]) {
     return { error: "* Invalid username or password" };
   }
-  // console.log(result[0][0][0]);
-  const match = await bcrypt.compare(password, result[0][0][0].hash);
+  // // console.log(result[0][0][0]);
+  // console.log(JSON.stringify(result[0][0][0].hash));
+  // console.log(password);
+
+  // Create a Uint8Array from the byte array
+let uint8Array = new Uint8Array(result[0][0][0].hash);
+// Use TextDecoder to convert the Uint8Array to a string
+let decoder = new TextDecoder();
+let decodedString = decoder.decode(uint8Array);
+
+  const match = await bcrypt.compare(password, decodedString);
   // console.log(match);
   if (!match) {
     return { error: "* Invalid username or password" };
