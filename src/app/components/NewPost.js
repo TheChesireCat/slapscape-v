@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { useFormState} from "react-dom";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useFormState } from "react-dom";
 import { redirect, useSearchParams } from "next/navigation";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -9,12 +9,14 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import { newPost } from "@/app/lib/actions";
 
+import "react-advanced-cropper/dist/style.css";
+import { CropperRef, Cropper } from "react-advanced-cropper";
 
 // import { createNewPost } from "@/app/lib/actions";
 
 const initialState = {
-    error: null,
-  };
+  error: null,
+};
 
 function UpdateMapView({ loc }) {
   const map = useMap();
@@ -37,19 +39,44 @@ const NewPost = () => {
   const [manualLat, setManualLat] = useState("");
   const [manualLng, setManualLng] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
-  const [tags, setTags] = useState( []); 
-  const [tagInput, setTagInput] = useState(''); 
+  const [tags, setTags] = useState([]);
+  const [tagInput, setTagInput] = useState("");
   const [postError, setPostError] = useState(null);
+
+  const [cropSettings, setCropSettings] = useState({});
+  const [completedCrops, setCompletedCrops] = useState({});
+  const cropperRefs = useRef([]);
+  const [isCropping, setIsCropping] = useState(null);
+  const [imagesFinal, setImagesFinal] = useState([]);
+
+  const onChange = (cropper) => {
+    // console.log("onChange", isCropping);
+    setCropSettings((prev) => ({
+      ...prev,
+      [isCropping]: cropper.getCoordinates(),
+    }));
+
+    setImagesFinal((prev) => {
+      const newImages = [...prev];
+      newImages[isCropping] = cropper.getCanvas();
+      return newImages;
+    });
+    
+    console.log(imagesFinal);
+    console.log(images);
+    // console.log(cropper.getCoordinates(), cropper.getCanvas());
+    // console.log(cropSettings  );
+  };
 
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch('/api/tagList');
+        const response = await fetch("/api/tagList");
         const data = await response.json();
         // console.log(data);
         setTags(data);
       } catch (error) {
-        console.error('Error fetching tags:', error);
+        console.error("Error fetching tags:", error);
       }
     };
 
@@ -58,26 +85,25 @@ const NewPost = () => {
 
   const createNewTag = async () => {
     try {
-      const response = await fetch('/api/tagCreate', {
-        method: 'POST',
+      const response = await fetch("/api/tagCreate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ tag: tagInput }),
       });
 
       if (response.ok) {
-        setTags(prev => [...prev, tagInput]);
+        setTags((prev) => [...prev, tagInput]);
         addTag(tagInput);
-        setTagInput(''); // Clear the input field
+        setTagInput(""); // Clear the input field
       } else {
-        throw new Error('Failed to create tag');
+        throw new Error("Failed to create tag");
       }
     } catch (error) {
-      console.error('Error creating new tag:', error);
+      console.error("Error creating new tag:", error);
     }
   };
-
 
   const addTag = (tag) => {
     if (!selectedTags.includes(tag)) {
@@ -86,7 +112,7 @@ const NewPost = () => {
   };
 
   const removeTag = (tagToRemove) => {
-    setSelectedTags(selectedTags.filter(tag => tag !== tagToRemove));
+    setSelectedTags(selectedTags.filter((tag) => tag !== tagToRemove));
   };
 
   useEffect(() => {
@@ -123,6 +149,20 @@ const NewPost = () => {
     setImagePreviews((prevPreviews) => [...prevPreviews, ...newImagePreviews]);
   };
 
+  // const onCropChange = (index, crop) => {
+  //   setCropSettings((prev) => ({
+  //     ...prev,
+  //     [index]: crop,
+  //   }));
+  // };
+
+  // const onCropComplete = (index, crop) => {
+  //   setCompletedCrops((prev) => ({
+  //     ...prev,
+  //     [index]: crop,
+  //   }));
+  // };
+
   useEffect(() => {
     // Clean up on component unmount
     return () => {
@@ -140,37 +180,35 @@ const NewPost = () => {
     },
   }));
 
+  //   const [state, formAction] = useFormState(testAction, initialState);
 
-
-//   const [state, formAction] = useFormState(testAction, initialState);
-
-async function action(fData){  
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('description', description);
-  for (const tag of selectedTags) {
-    formData.append('tags', tag);
+  async function action(fData) {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    for (const tag of selectedTags) {
+      formData.append("tags", tag);
+    }
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
+    }
+    formData.append("lat", manualLat);
+    formData.append("lng", manualLng);
+    setPostError(null);
+    const response = await newPost(formData);
+    if (response.error) {
+      setPostError(response);
+    } else {
+      redirect("/home");
+    }
   }
-  for (let i = 0; i < images.length; i++) {
-    formData.append('images', images[i]);
-  }
-  formData.append('lat', manualLat);
-  formData.append('lng', manualLng);
-  setPostError(null);
-  const response =  await newPost(formData);
-  if (response.error) {
-    setPostError(response);
-  } else {
-    redirect("/home");
-  }
-}
-
-
-
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form action={action} className="bg-white mx-auto rounded-xl px-8 pb-8 mb-4 shadow-lg w-full max-w-md">
+    <div className="flex justify-center items-center bg-gray-100 overflow-scroll">
+      <form
+        action={action}
+        className="bg-white mx-auto rounded-xl px-8 pb-8 mt-4 mb-4 shadow-lg w-full max-w-md"
+      >
         <h1 className=" text-xl font-bold text-center mb-6 pt-2">
           Add a New Post
         </h1>
@@ -278,10 +316,17 @@ async function action(fData){
           </label>
           <div className="border rounded w-full py-2 px-3 text-gray-700 flex flex-wrap min-h-[40px]">
             {selectedTags.length > 0 ? (
-              selectedTags.map(tag => (
-                <div key={tag} className="flex items-center bg-gray-200 rounded-full px-3 py-1 text-sm text-gray-700 mr-2 mb-2">
+              selectedTags.map((tag) => (
+                <div
+                  key={tag}
+                  className="flex items-center bg-gray-200 rounded-full px-3 py-1 text-sm text-gray-700 mr-2 mb-2"
+                >
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} className="ml-2 text-gray-500 hover:text-gray-700">
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="ml-2 text-gray-500 hover:text-gray-700"
+                  >
                     &#215; {/* 'X' symbol */}
                   </button>
                 </div>
@@ -290,10 +335,18 @@ async function action(fData){
               <span className="text-gray-400 text-sm">Select tags...</span>
             )}
           </div>
-          <select onChange={(e) => addTag(e.target.value)} defaultValue="" className="mt-2 shadow border rounded w-full py-2 px-3 text-gray-700">
-            <option value="" disabled>Add a tag...</option>
-            {tags.map(tag => (
-              <option key={tag} value={tag}>{tag}</option>
+          <select
+            onChange={(e) => addTag(e.target.value)}
+            defaultValue=""
+            className="mt-2 shadow border rounded w-full py-2 px-3 text-gray-700"
+          >
+            <option value="" disabled>
+              Add a tag...
+            </option>
+            {tags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
             ))}
           </select>
           <div className="flex items-center p-2">
@@ -325,16 +378,35 @@ async function action(fData){
           />
           <div className="flex flex-wrap mt-2">
             {imagePreviews.map((preview, index) => (
-              <img
-                key={index}
-                src={preview}
-                alt="Preview"
-                className="w-24 h-24 object-cover p-1"
-              />
+              <div key={index} className="relative">
+                <img
+                  src={preview}
+                  alt={`Preview ${index}`}
+                  className="w-24 h-24 object-cover p-1"
+                  onClick={() => {
+                    setIsCropping(index);
+
+                  }}
+                />
+              </div>
             ))}
           </div>
+          <Cropper
+            src={imagePreviews[isCropping]}
+            onChange={onChange}
+            className={"cropper"}
+            defaultCoordinates={cropSettings[isCropping] || {
+              left: 100,
+              top: 100,
+              width: 200,
+              height: 200,
+      }}
+          />
         </div>
-        <div id="submit" className="flex items-center content-center justify-center">
+        <div
+          id="submit"
+          className="flex items-center content-center justify-center"
+        >
           <button
             type="submit"
             className=" text-l bg-purple-500 border hover:bg-purple-700 text-white font-bold py-2 px-4 rounded m-2 input-shadow"
