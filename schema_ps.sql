@@ -15,6 +15,10 @@ USE slapscape_v2;
 --     city_name VARCHAR(50),
 --     FOREIGN KEY (state_name) REFERENCES state(state_name) ON DELETE CASCADE
 -- );
+-- Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key ' at line 1
+
+-- Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key constraint 'post_ibfk_1' SET NULL
+
 
 CREATE TABLE user (
 	username varchar(15) PRIMARY KEY,
@@ -27,7 +31,7 @@ CREATE TABLE user (
 
 CREATE TABLE post (
     post_id CHAR(36) NOT NULL,
-    username VARCHAR(15) NOT NULL,
+    username VARCHAR(15),
     title VARCHAR(100) NOT NULL,
     description VARCHAR(255) NOT NULL,
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -62,10 +66,10 @@ CREATE TABLE posttags (
 
 CREATE TABLE comments (
     post_id CHAR(36) NOT NULL,
-    username VARCHAR(15) NOT NULL,
+    username VARCHAR(15),
     comment VARCHAR(150) NOT NULL,
     date_created DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE SET NULL,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
     FOREIGN KEY (username) REFERENCES user(username) ON DELETE SET NULL
 );
 
@@ -88,7 +92,7 @@ DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE GetUserHash(IN p_username VARCHAR(15))
 BEGIN
-    SELECT HEX(password) as hash FROM user WHERE username = p_username;
+    SELECT password as hash FROM user WHERE username = p_username;
 END //
 DELIMITER ;
 
@@ -125,7 +129,6 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS GetUserData;
 
 DELIMITER //
 CREATE PROCEDURE GetUserData(IN p_username VARCHAR(15))

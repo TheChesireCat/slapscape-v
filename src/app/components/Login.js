@@ -1,7 +1,7 @@
 'use client'
 
 import { useFormState, useFormStatus } from "react-dom";
-import { loginUser } from "@/app/lib/actions";
+import { loginUser } from "@/app/lib/actionsSupa";
 import { Button } from "@/app/components/ui/button";
 // import cookieCutter from 'cookie-cutter'
 

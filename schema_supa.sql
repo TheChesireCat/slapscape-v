@@ -1,25 +1,25 @@
-DROP DATABASE IF EXISTS slapscape_v2;
-CREATE DATABASE IF NOT EXISTS slapscape_v2;
-USE slapscape_v2;
+-- DROP DATABASE IF EXISTS slapscape_v2;
+-- CREATE DATABASE IF NOT EXISTS slapscape_v2;
+-- USE slapscape_v2;
 
--- CREATE TABLE state (
---     state_name VARCHAR(30) PRIMARY KEY,
---     state_polygon POLYGON,
---     UNIQUE(state_name)
--- );
+-- -- CREATE TABLE state (
+-- --     state_name VARCHAR(30) PRIMARY KEY,
+-- --     state_polygon POLYGON,
+-- --     UNIQUE(state_name)
+-- -- );
 
--- CREATE TABLE zipcode (
---     zipcode_num CHAR(5) NOT NULL PRIMARY KEY,
---     state_name VARCHAR(30),
---     zipcode_polygon POLYGON,
---     city_name VARCHAR(50),
---     FOREIGN KEY (state_name) REFERENCES state(state_name) ON DELETE CASCADE
--- );
--- Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key ' at line 1
+-- -- CREATE TABLE zipcode (
+-- --     zipcode_num CHAR(5) NOT NULL PRIMARY KEY,
+-- --     state_name VARCHAR(30),
+-- --     zipcode_polygon POLYGON,
+-- --     city_name VARCHAR(50),
+-- --     FOREIGN KEY (state_name) REFERENCES state(state_name) ON DELETE CASCADE
+-- -- );
+-- -- Error Code: 1064. You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key ' at line 1
 
--- Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key constraint 'post_ibfk_1' SET NULL
+-- -- Error Code: 1830. Column 'username' cannot be NOT NULL: needed in a foreign key constraint 'post_ibfk_1' SET NULL
 
-CREATE TABLE "user" (
+CREATE TABLE userAcc (
 	username VARCHAR(15) PRIMARY KEY,
 	password BYTEA NOT NULL,
 	user_img VARCHAR(255),
@@ -36,7 +36,7 @@ CREATE TABLE post (
 	date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	coordinates POINT NOT NULL,
 	UNIQUE(post_id),
-	FOREIGN KEY (username) REFERENCES "user"(username) ON DELETE SET NULL
+	FOREIGN KEY (username) REFERENCES userAcc(username) ON DELETE SET NULL
 );
 
 CREATE TABLE postimages (
@@ -51,7 +51,7 @@ CREATE TABLE tags (
 	tag VARCHAR(20) PRIMARY KEY,
 	tag_created_by VARCHAR(15),
 	date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (tag_created_by) REFERENCES "user"(username) ON DELETE SET NULL
+	FOREIGN KEY (tag_created_by) REFERENCES userAcc(username) ON DELETE SET NULL
 );
 
 CREATE TABLE posttags (
@@ -67,14 +67,14 @@ CREATE TABLE comments (
 	comment VARCHAR(150) NOT NULL,
 	date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
-	FOREIGN KEY (username) REFERENCES "user"(username) ON DELETE SET NULL
+	FOREIGN KEY (username) REFERENCES userAcc(username) ON DELETE SET NULL
 );
 
 CREATE TABLE likes (
 	post_id CHAR(36) NOT NULL,
 	username VARCHAR(15) NOT NULL,
 	FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
-	FOREIGN KEY (username) REFERENCES "user"(username) ON DELETE CASCADE
+	FOREIGN KEY (username) REFERENCES userAcc(username) ON DELETE CASCADE
 );
 
 
@@ -82,32 +82,60 @@ CREATE OR REPLACE PROCEDURE DeleteUser(p_username VARCHAR(15))
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    DELETE FROM "user" WHERE username = p_username;
+    DELETE FROM userAcc WHERE username = p_username;
 END;
 $$;
 
 
-CREATE OR REPLACE PROCEDURE GetUserHash(p_username VARCHAR(15))
+-- CREATE OR REPLACE PROCEDURE GetUserHash(p_username VARCHAR(15))
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     SELECT password AS hash FROM userAcc WHERE username = p_username;
+-- END;
+-- $$;
+
+CREATE OR REPLACE FUNCTION GetUserHash(p_username VARCHAR(15))
+RETURNS BYTEA
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    hash BYTEA;
 BEGIN
-    SELECT password AS hash FROM "user" WHERE username = p_username;
+    SELECT password INTO hash FROM userAcc WHERE username = p_username;
+    RETURN hash;
 END;
 $$;
 
 
-CREATE OR REPLACE PROCEDURE RegisterUser(p_username VARCHAR(15), p_password_hash BYTEA)
+
+-- CREATE OR REPLACE PROCEDURE RegisterUser(p_username VARCHAR(15), p_password_hash BYTEA)
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     IF EXISTS (SELECT 1 FROM userAcc WHERE username = p_username) THEN
+--         SELECT 'Username exists' AS message;
+--     ELSE
+--         INSERT INTO userAcc (username, password) VALUES (p_username, p_password_hash);
+--         SELECT 'Success' AS message;
+--     END IF;
+-- END;
+-- $$;
+
+CREATE OR REPLACE FUNCTION RegisterUser(p_username VARCHAR(15), p_password_hash BYTEA)
+RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM "user" WHERE username = p_username) THEN
-        RAISE NOTICE 'Username exists';
+    IF EXISTS (SELECT 1 FROM useracc WHERE username = p_username) THEN
+        RETURN 'Username exists';
     ELSE
-        INSERT INTO "user" (username, password) VALUES (p_username, p_password_hash);
-        RAISE NOTICE 'Success';
+        INSERT INTO useracc (username, password) VALUES (p_username, p_password_hash);
+        RETURN 'Success';
     END IF;
 END;
 $$;
+
 
 CREATE OR REPLACE PROCEDURE GetAllTags()
 LANGUAGE plpgsql
@@ -136,8 +164,8 @@ CREATE OR REPLACE PROCEDURE GetUserData(p_username VARCHAR(15))
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF EXISTS (SELECT 1 FROM "user" WHERE username = p_username) THEN
-        SELECT username, bio, user_img FROM "user" WHERE username = p_username;
+    IF EXISTS (SELECT 1 FROM userAcc WHERE username = p_username) THEN
+        SELECT username, bio, user_img FROM userAcc WHERE username = p_username;
     ELSE
         RAISE NOTICE 'User does not exist';
     END IF;
@@ -148,7 +176,7 @@ CREATE OR REPLACE PROCEDURE UpdateUserData(p_username CHAR(30), p_password VARCH
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE "user" SET bio = p_bio, user_img = p_user_img, password = p_password WHERE username = p_username;
+    UPDATE userAcc SET bio = p_bio, user_img = p_user_img, password = p_password WHERE username = p_username;
 END;
 $$;
 
@@ -156,7 +184,7 @@ CREATE OR REPLACE PROCEDURE UpdateUserBio(p_username CHAR(30), p_bio VARCHAR(255
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE "user" SET bio = p_bio WHERE username = p_username;
+    UPDATE userAcc SET bio = p_bio WHERE username = p_username;
 END;
 $$;
 
@@ -165,7 +193,7 @@ CREATE OR REPLACE PROCEDURE UpdateUserPassword(p_username CHAR(30), p_password V
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE "user" SET password = p_password WHERE username = p_username;
+    UPDATE userAcc SET password = p_password WHERE username = p_username;
 END;
 $$;
 
@@ -173,7 +201,7 @@ CREATE OR REPLACE PROCEDURE UpdateUserImg(p_username CHAR(30), p_user_img VARCHA
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE "user" SET user_img = p_user_img WHERE username = p_username;
+    UPDATE userAcc SET user_img = p_user_img WHERE username = p_username;
 END;
 $$;
 
@@ -235,7 +263,7 @@ AS $$
 BEGIN
     SELECT p.post_id, to_char(p.date_created, 'DD Mon YYYY') as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
     FROM post AS p
-    JOIN "user" AS u ON p.username = u.username
+    JOIN userAcc AS u ON p.username = u.username
     WHERE p.post_id = p_post_id;
 END;
 $$;
@@ -278,7 +306,7 @@ AS $$
 BEGIN
     SELECT u.username as username, u.user_img as user_img, c.comment as comment, to_char(c.date_created, 'DD Mon YYYY') as date_str
     FROM comments AS c
-    JOIN "user" AS u ON u.username = c.username
+    JOIN userAcc AS u ON u.username = c.username
     WHERE post_id = p_post_id
     ORDER BY c.date_created DESC;
 END;
@@ -299,7 +327,6 @@ END;
 $$;
 
 
-DELIMITER //
 
 CREATE OR REPLACE FUNCTION GetPostLiked(p_post_id CHAR(36), p_username VARCHAR(15))
 RETURNS BOOLEAN
@@ -384,7 +411,7 @@ BEGIN
     SELECT p.post_id, to_char(p.date_created, 'DD Mon YYYY') as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
     FROM post AS p
     JOIN posttags AS pt ON p.post_id = pt.post_id
-    JOIN "user" AS u ON p.username = u.username
+    JOIN userAcc AS u ON p.username = u.username
     WHERE pt.tag = p_tag
     ORDER BY p.date_created DESC
     LIMIT p_posts_per_page OFFSET offset_val;
@@ -413,7 +440,7 @@ BEGIN
     offset_val := (p_page - 1) * p_posts_per_page;
     SELECT p.post_id, to_char(p.date_created, 'DD Mon YYYY') as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
     FROM post AS p
-    JOIN "user" AS u ON p.username = u.username
+    JOIN userAcc AS u ON p.username = u.username
     WHERE p.username = p_username
     ORDER BY p.date_created DESC
     LIMIT p_posts_per_page OFFSET offset_val;
@@ -442,15 +469,13 @@ BEGIN
     SELECT p.post_id, to_char(p.date_created, 'DD Mon YYYY') as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
     FROM post AS p
     JOIN likes AS l ON p.post_id = l.post_id
-    JOIN "user" AS u ON p.username = u.username
+    JOIN userAcc AS u ON p.username = u.username
     WHERE l.username = p_username
     ORDER BY p.date_created DESC
     LIMIT p_posts_per_page OFFSET offset_val;
 END;
 $$;
 
-
--- return number of posts per tag
 CREATE OR REPLACE PROCEDURE GetPostsPerTag()
 LANGUAGE plpgsql
 AS $$
@@ -480,7 +505,7 @@ BEGIN
     offset_val := (p_page - 1) * p_posts_per_page;
     SELECT p.post_id, to_char(p.date_created, 'DD Mon YYYY') as date_str, u.username, u.user_img, p.title, p.description, ST_X(p.coordinates) as lat, ST_Y(p.coordinates) AS lon
     FROM post AS p
-    JOIN "user" AS u ON p.username = u.username
+    JOIN userAcc AS u ON p.username = u.username
     WHERE LOWER(p.title) LIKE '%' || LOWER(p_query) || '%' OR LOWER(p.description) LIKE '%' || LOWER(p_query) || '%'
     ORDER BY p.date_created DESC
     LIMIT p_posts_per_page OFFSET offset_val;
@@ -510,7 +535,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     SELECT COUNT(*) as total_users
-    FROM "user";
+    FROM userAcc;
 END;
 $$;
 

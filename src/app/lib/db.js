@@ -1,5 +1,17 @@
 import mysql from 'mysql2/promise';
 
+import postgres from 'postgres'
+
+const sql = postgres({ 
+  host: process.env.POSTGRES_HOST,
+  port: process.env.POSTGRES_PORT,
+  database: process.env.POSTGRES_DB,
+  user: process.env.POSTGRES_USER,
+  onnotice: notice => {return notice;}
+ }) 
+
+export default sql;
+
 
 export async function executeQuery({ query, values }) {
   try {

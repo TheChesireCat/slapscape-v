@@ -1,7 +1,7 @@
 'use client'
 
 import { useFormState, useFormStatus } from "react-dom";
-import { registerUser } from "@/app/lib/actions";
+import { registerUser } from "@/app/lib/actionsSupa";
 import { Button } from "@/app/components/ui/button";
 
 const initialState = {
