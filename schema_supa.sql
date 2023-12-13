@@ -137,27 +137,71 @@ END;
 $$;
 
 
-CREATE OR REPLACE PROCEDURE GetAllTags()
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    SELECT tag FROM tags;
-END;
-$$;
+-- CREATE OR REPLACE PROCEDURE GetAllTags()
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     SELECT tag FROM tags;
+-- END;
+-- $$;
 
 
-CREATE OR REPLACE PROCEDURE CreateTag(p_tag VARCHAR(20), p_tag_created_by VARCHAR(15))
+-- CREATE OR REPLACE PROCEDURE CreateTag(p_tag VARCHAR(20), p_tag_created_by VARCHAR(15))
+-- LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--     IF EXISTS (SELECT 1 FROM tags WHERE tag = p_tag) THEN
+--         RAISE NOTICE 'Tag already exists';
+--     ELSE
+--         INSERT INTO tags (tag, tag_created_by) VALUES (p_tag, p_tag_created_by);
+--         RAISE NOTICE 'Success';
+--     END IF;
+-- END;
+-- $$;
+
+CREATE OR REPLACE FUNCTION CreateTag(p_tag VARCHAR(20), p_tag_created_by VARCHAR(15))
+RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 BEGIN
     IF EXISTS (SELECT 1 FROM tags WHERE tag = p_tag) THEN
-        RAISE NOTICE 'Tag already exists';
+        RETURN 'Tag already exists';
     ELSE
         INSERT INTO tags (tag, tag_created_by) VALUES (p_tag, p_tag_created_by);
-        RAISE NOTICE 'Success';
+        RETURN 'Success';
     END IF;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION CreatePost(p_post_id CHAR(36), p_username VARCHAR(15), p_title VARCHAR(100), p_description VARCHAR(150), p_coordinates POINT)
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO post (post_id, username, title, description, coordinates) VALUES (p_post_id, p_username, p_title, p_description, p_coordinates);
+    RETURN 'Post ID: %' || p_post_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION CreatePostImage(p_imageUrl VARCHAR(255), p_post_id CHAR(36))
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO postimages (imageUrl, post_id) VALUES (p_imageUrl, p_post_id);
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION CreatePostTag(p_post_id CHAR(36), p_tag VARCHAR(20))
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO posttags (post_id, tag) VALUES (p_post_id, p_tag);
+END;
+$$;
+
 
 
 CREATE OR REPLACE PROCEDURE GetUserData(p_username VARCHAR(15))
@@ -205,31 +249,10 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE CreatePost(p_post_id CHAR(36), p_username VARCHAR(15), p_title VARCHAR(100), p_description VARCHAR(150), p_coordinates POINT)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO post (post_id, username, title, description, coordinates) VALUES (p_post_id, p_username, p_title, p_description, p_coordinates);
-    RAISE NOTICE 'Post ID: %', p_post_id;
-END;
-$$;
 
 
-CREATE OR REPLACE PROCEDURE CreatePostImage(p_imageUrl VARCHAR(255), p_post_id CHAR(36))
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO postimages (imageUrl, post_id) VALUES (p_imageUrl, p_post_id);
-END;
-$$;
 
-CREATE OR REPLACE PROCEDURE CreatePostTag(p_post_id CHAR(36), p_tag VARCHAR(20))
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    INSERT INTO posttags (post_id, tag) VALUES (p_post_id, p_tag);
-END;
-$$;
+
 
 CREATE OR REPLACE PROCEDURE GetAllPosts()
 LANGUAGE plpgsql

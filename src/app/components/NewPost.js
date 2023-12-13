@@ -7,7 +7,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
-import { newPost } from "@/app/lib/actions";
+import { newPost } from "@/app/lib/actionsSupa";
 
 import "react-advanced-cropper/dist/style.css";
 import { CropperRef, Cropper } from "react-advanced-cropper";
@@ -44,8 +44,6 @@ const NewPost = () => {
   const [postError, setPostError] = useState(null);
 
   const [cropSettings, setCropSettings] = useState({});
-  const [completedCrops, setCompletedCrops] = useState({});
-  const cropperRefs = useRef([]);
   const [isCropping, setIsCropping] = useState(null);
   const [imagesFinal, setImagesFinal] = useState([]);
 
@@ -194,6 +192,7 @@ const NewPost = () => {
     }
     formData.append("lat", manualLat);
     formData.append("lng", manualLng);
+    formData.append("cropSettings", JSON.stringify(cropSettings));
     setPostError(null);
     const response = await newPost(formData);
     if (response.error) {

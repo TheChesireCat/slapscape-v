@@ -33,6 +33,7 @@
     "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
     "recharts": "^2.10.3",
+    "sharp": "^0.33.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1"

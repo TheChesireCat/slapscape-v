@@ -11,6 +11,7 @@ import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import sharp from "sharp";
 
 export async function registerUser(prevState, formData) {
   // console.log(formData);
@@ -71,7 +72,30 @@ export async function loginUser(prevState, formData) {
   return redirect("/home");
 }
 
+
+export async function getAllTags() {
+  const result = await sql`SELECT tag FROM tags`;
+  console.log(result[0]);
+  // const result = await executeQuery({
+  //   query: "CALL GetAllTags()",
+  // });
+  //   console.log(result);
+  return result || [];
+}
+
+export async function createTag(tag, user) {
+  // const result = await executeQuery({
+  //   query: "CALL CreateTag(?,?)",
+  //   values: [tag, user],
+  // });
+  const result = await sql`SELECT CreateTag(${tag}, ${user}) as message`;
+  revalidateTag("tags");
+  return result[0][0];
+}
+
+
 export async function newPost(formData) {
+  console.log(formData);
   const title = formData.get("title");
   const description = formData.get("description");
   const tags = formData.getAll("tags");
@@ -94,15 +118,46 @@ export async function newPost(formData) {
     }
   }
 
+  const cropSettings = JSON.parse(formData.get("cropSettings"));
+
+
+  
+
   // upload images/image to s3 and get the urls
 
   const imageList = [];
 
-  for (const imageFile of imageFiles) {
+  // for (const imageFile of imageFiles) {
+  //   const fileExtension = imageFile.name.split(".").pop();
+  //   const filePath = `${uuidv4()}.${fileExtension}`;
+  //   const client = new S3Client({ region: process.env.AWS_REGION });
+  //   const buffer = Buffer.from(await imageFile.arrayBuffer());
+  //   const command = new PutObjectCommand({
+  //     Bucket: process.env.AWS_BUCKET_NAME,
+  //     Key: filePath,
+  //     Body: buffer,
+  //     ContentType: imageFile.type,
+  //   });
+  //   const response = await client.send(command);
+  //   imageList.push("https://slapscape-bucket.s3.amazonaws.com/" + filePath);
+  // }
+
+  for (let i = 0; i < imageFiles.length; i++) {
+    const imageFile = imageFiles[i];
+    let buffer = Buffer.from(await imageFile.arrayBuffer());
+  
+    // Check if there are crop settings for this image
+    if (cropSettings[i]) {
+      const { width, height, left, top } = cropSettings[i];
+      buffer = await sharp(buffer)
+        .extract({ width: width, height: height, left: left, top: top }) // Crop based on settings
+        .toBuffer();
+    }
+  
+    // Upload the (possibly cropped) image to S3
     const fileExtension = imageFile.name.split(".").pop();
     const filePath = `${uuidv4()}.${fileExtension}`;
     const client = new S3Client({ region: process.env.AWS_REGION });
-    const buffer = Buffer.from(await imageFile.arrayBuffer());
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: filePath,
@@ -112,6 +167,7 @@ export async function newPost(formData) {
     const response = await client.send(command);
     imageList.push("https://slapscape-bucket.s3.amazonaws.com/" + filePath);
   }
+
   const postId = uuidv4();
   const token = cookies().get("AUTH_TOKEN");
   const payload = await verifyJwtToken(token?.value);
@@ -130,24 +186,33 @@ export async function newPost(formData) {
   //   lng: lng,
   // });
 
-  await executeQuery({
-    query: "CALL CreatePost(?,?,?,?,POINT(?,?))",
-    values: [postId, username, title, description, lat, lng],
-  });
+  // await executeQuery({
+  //   query: "CALL CreatePost(?,?,?,?,POINT(?,?))",
+  //   values: [postId, username, title, description, lat, lng],
+  // });
 
-  for (const imageUrl of imageList) {
-    await executeQuery({
-      query: "CALL CreatePostImage(?,?)",
-      values: [imageUrl, postId],
-    });
+  const result = await sql`SELECT CreatePost(${postId}, ${username}, ${title}, ${description}, POINT(${lat}, ${lng}))`;
+  for( const imageUrl of imageList){
+    await sql`SELECT CreatePostImage(${imageUrl}, ${postId})`;
+  }
+  for( const tag of tags){
+    await sql`SELECT CreatePostTag(${postId}, ${tag})`;
   }
 
-  for (const tag of tags) {
-    await executeQuery({
-      query: "CALL CreatePostTag(?,?)",
-      values: [postId, tag],
-    });
-  }
+
+  // for (const imageUrl of imageList) {
+  //   await executeQuery({
+  //     query: "CALL CreatePostImage(?,?)",
+  //     values: [imageUrl, postId],
+  //   });
+  // }
+
+  // for (const tag of tags) {
+  //   await executeQuery({
+  //     query: "CALL CreatePostTag(?,?)",
+  //     values: [postId, tag],
+  //   });
+  // }
 
   // const query = "CALL CreatePost(?,?,?,?)";
   // const values = [title, description, username, coordinates];
@@ -254,22 +319,8 @@ export async function deleteUser(user) {
   redirect("/login");
 }
 
-export async function getAllTags() {
-  const result = await executeQuery({
-    query: "CALL GetAllTags()",
-  });
-  //   console.log(result);
-  return result[0][0];
-}
 
-export async function createTag(tag, user) {
-  const result = await executeQuery({
-    query: "CALL CreateTag(?,?)",
-    values: [tag, user],
-  });
-  revalidateTag("tags");
-  return result[0][0];
-}
+
 
 export async function getPostTags(postId) {
   const result = await executeQuery({
