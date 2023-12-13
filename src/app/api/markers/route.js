@@ -1,4 +1,4 @@
-import { getPostsInBounds } from '@/app/lib/actions';   
+import { getPostsInBounds } from '@/app/lib/actionsSupa';   
 
 export async function POST(request) {
     try {

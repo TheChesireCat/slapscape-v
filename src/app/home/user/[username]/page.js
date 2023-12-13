@@ -1,4 +1,4 @@
-import { getUserData, getTotalPostsByUser } from "@/app/lib/actions";
+import { getUserData, getTotalPostsByUser } from "@/app/lib/actionsSupa";
 import { CardContent, Typography } from "@mui/material";
 import { cookies } from "next/headers";
 import { verifyJwtToken } from "@/app/lib/auth";
@@ -23,7 +23,7 @@ export default async function UserProfile({ searchParams, params }) {
   //   redirect("/home/user");
   // }
 
-  if (userdata[0].result) {
+  if (!userdata) {
     return <div>User Doesn&apos;t Exist</div>;
   }
 
@@ -44,7 +44,7 @@ export default async function UserProfile({ searchParams, params }) {
             </label>
             <CardContent>
               <Typography variant="primary" color="text.primary">
-                {userdata[0].username}
+                {userdata.username}
               </Typography>
             </CardContent>
           </div>
@@ -60,7 +60,7 @@ export default async function UserProfile({ searchParams, params }) {
               width="60"
               height="60"
               src={
-                userdata[0]?.user_img ||
+                userdata?.user_img ||
                 "https://img.icons8.com/ios-glyphs/30/user--v1.png"
               }
               alt="user--v1"
@@ -76,7 +76,7 @@ export default async function UserProfile({ searchParams, params }) {
             </label>
             <CardContent>
               <Typography variant="primary" color="text.primary">
-                {userdata[0].bio}
+                {userdata.bio}
               </Typography>
             </CardContent>
           </div>

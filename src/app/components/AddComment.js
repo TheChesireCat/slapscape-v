@@ -1,9 +1,9 @@
 "use client";
 
 import { Comment } from "@mui/icons-material";
-import { addComment } from "../lib/actions";
-import { use, useState } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { addComment } from "../lib/actionsSupa";
+import { useState } from "react";
+import { useFormState } from "react-dom";
 
 const initialState = {
   error: null,

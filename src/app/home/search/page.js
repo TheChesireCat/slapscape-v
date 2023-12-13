@@ -1,4 +1,4 @@
-import { getTotalPostsByQuery } from "@/app/lib/actions";
+import { getTotalPostsByQuery } from "@/app/lib/actionsSupa";
 import PaginationTags from "@/app/components/PaginationTags";
 import QueryPosts from "@/app/components/QueryPosts";
 import TemporaryDrawer from "@/app/components/TemporaryDrawer";

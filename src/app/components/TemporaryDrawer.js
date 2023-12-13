@@ -3,23 +3,17 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import {
   BarChartIcon,
-  GitGraphIcon,
   Heart,
   HomeIcon,
   LogOutIcon,
   SidebarIcon,
-  StarIcon,
   UserIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -81,17 +75,7 @@ export default function TemporaryDrawer() {
             </ListItemButton>
           </ListItem>
         </Link>
-        <Link href="/home/visualizations">
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <BarChartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Visualizations" />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link href="/logout">
+        <a href="/logout">
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>
@@ -100,7 +84,7 @@ export default function TemporaryDrawer() {
               <ListItemText primary="Logout" />
             </ListItemButton>
           </ListItem>
-        </Link>
+        </a>
       </List>
     </Box>
   );

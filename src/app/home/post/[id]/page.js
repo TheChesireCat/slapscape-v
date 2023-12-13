@@ -9,7 +9,7 @@ import {
   getPostTags,
   getTotalLikes,
   getPostComments,
-} from "@/app/lib/actions";
+} from "@/app/lib/actionsSupa";
 import { cookies } from "next/headers";
 import { verifyJwtToken } from "@/app/lib/auth";
 import AddLike from "@/app/components/AddLike";
@@ -29,6 +29,8 @@ export default async function PostPage({ params }) {
 
   const postData = await getPostInfo(post_id);
 
+  // console.log(postData);
+
   if (!postData[0]) {
     redirect("/404");
   }
@@ -43,7 +45,8 @@ export default async function PostPage({ params }) {
   // console.log(postImages);
 
   const postLikedResult = await getPostLiked(post_id, username);
-  const isLiked = postLikedResult.result;
+  const isLiked = postLikedResult[0].result;
+  // console.log(isLiked);
 
   const tags = await getPostTags(post_id);
   // console.log(tags);
@@ -64,11 +67,11 @@ export default async function PostPage({ params }) {
             <Box className="h-full w-full" sx={{ overflowY: "scroll" }}>
               <ImageList variant="masonry" cols={3} gap={8}>
                 {postImages.map((item) => (
-                  <ImageListItem key={item.imageUrl}>
+                  <ImageListItem key={item.imageurl}>
                     <img
                       style={{ maxWidth: "500px", maxHeight: "500px" }}
-                      srcSet={item.imageUrl}
-                      src={item.imageUrl}
+                      srcSet={item.imageurl}
+                      src={item.imageurl}
                       alt={item.title}
                       loading="lazy"
                     />
@@ -157,14 +160,14 @@ export default async function PostPage({ params }) {
                 <a href={`/home/user/${postData[0].username}`}>
                   <img
                     className="w-10 h-10 rounded-full mr-4 border border-purple-700 p-1"
-                    src={user_img}
+                    src={user_img || "https://img.icons8.com/ios-filled/50/remove-user-male.png"}
                     alt={postData[0].username}
                   />
                 </a>
 
                 <div className="text-sm">
                   <p className="text-gray-900 leading-none">
-                    {postData[0].username}
+                    {postData[0].username || "Deleted User"}
                   </p>
                   <p className="text-gray-600">{postData[0].date_str}</p>
                 </div>

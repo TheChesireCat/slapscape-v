@@ -45,6 +45,7 @@ export async function middleware(request) {
   // }
 
   if (!hasVerifiedToken) {
+    // console.log(request);
     // const searchParams = new URLSearchParams(nextUrl.searchParams);
     // searchParams.set("next", nextUrl.pathname);
     const response = NextResponse.redirect(

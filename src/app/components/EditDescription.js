@@ -1,6 +1,6 @@
 "use client";
 
-import { updatePostDescription } from "@/app/lib/actions";
+import { updatePostDescription } from "@/app/lib/actionsSupa";
 import { useFormState } from "react-dom";
 import { useState } from "react";
 

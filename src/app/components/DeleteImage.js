@@ -1,8 +1,8 @@
 "use client";
 
 import { RemoveCircleOutline } from "@mui/icons-material";
-import { deleteImage } from "../lib/actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { deleteImage } from "../lib/actionsSupa";
+import { useFormState } from "react-dom";
 
 
 const initialState = {

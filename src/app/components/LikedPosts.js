@@ -4,7 +4,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Link from "next/link";
-import { getPostsLikedByUser } from "@/app/lib/actions";
+import { getPostsLikedByUser } from "@/app/lib/actionsSupa";
 export default async function TagPosts({ username, pageNumber, postsPerPage }) {
   const posts = await getPostsLikedByUser(username, pageNumber, postsPerPage);
   return (

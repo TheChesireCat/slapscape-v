@@ -1,10 +1,9 @@
 "use client";
 
-import { updateUserData, del, deleteUser } from "@/app/lib/actions";
+import { updateUserData, deleteUser } from "@/app/lib/actionsSupa";
 import { Button } from "@/app/components/ui/button";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import Link from "next/link";
-import { View, ViewIcon } from "lucide-react";
 import { Visibility } from "@mui/icons-material";
 
 const initialState = {

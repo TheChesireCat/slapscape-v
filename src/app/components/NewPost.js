@@ -60,9 +60,9 @@ const NewPost = () => {
       return newImages;
     });
     
-    console.log(imagesFinal);
-    console.log(images);
-    // console.log(cropper.getCoordinates(), cropper.getCanvas());
+    // console.log(imagesFinal);
+    // console.log(images);
+    // // console.log(cropper.getCoordinates(), cropper.getCanvas());
     // console.log(cropSettings  );
   };
 

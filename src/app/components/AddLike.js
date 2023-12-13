@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import { addOrRemoveLike } from "../lib/actions";
+import { addOrRemoveLike } from "../lib/actionsSupa";
 
 export default function AddLike({ likeCount, isLiked, postId, username }) {
   return (

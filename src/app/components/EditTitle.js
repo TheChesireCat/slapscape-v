@@ -1,6 +1,6 @@
 "use client";
 
-import { updatePostTitle } from "@/app/lib/actions";
+import { updatePostTitle } from "@/app/lib/actionsSupa";
 import { useFormState } from "react-dom";
 
 const initialState = {

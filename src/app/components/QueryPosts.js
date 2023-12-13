@@ -1,4 +1,4 @@
-import { getPostsByQuery } from "@/app/lib/actions";
+import { getPostsByQuery } from "@/app/lib/actionsSupa";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";

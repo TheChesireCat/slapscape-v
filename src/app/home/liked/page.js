@@ -1,6 +1,6 @@
 import { verifyJwtToken } from "@/app/lib/auth";
 import { cookies } from "next/headers";
-import { getTotalPostsLikedByUser } from "@/app/lib/actions";
+import { getTotalPostsLikedByUser } from "@/app/lib/actionsSupa";
 import LikedPosts from "@/app/components/LikedPosts";
 import PaginationTags from "@/app/components/PaginationTags";
 import TemporaryDrawer from "@/app/components/TemporaryDrawer";
