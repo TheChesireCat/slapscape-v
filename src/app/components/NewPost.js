@@ -141,10 +141,12 @@ const NewPost = () => {
     setImages((prevImages) => [...prevImages, ...selectedFiles]);
 
     // Generate and append new image previews
+    const oldImagePreviews = images.map((file) => URL.createObjectURL(file));
     const newImagePreviews = selectedFiles.map((file) =>
       URL.createObjectURL(file)
     );
-    setImagePreviews((prevPreviews) => [...prevPreviews, ...newImagePreviews]);
+    setImagePreviews((prevPreviews) => [...oldImagePreviews, ...newImagePreviews]);
+    // console.log(images.length);
   };
 
   // const onCropChange = (index, crop) => {
