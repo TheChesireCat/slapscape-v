@@ -17,7 +17,7 @@ export async function registerUser(prevState, formData) {
   const username = formData.get("username");
   const password = formData.get("password");
   if (username.length > 15) {
-    return { error: "* Username must be less than 15 characters long" };
+    return { error: "* Username must be less than 15ds characters long" };
   }
   if (password.length < 8) {
     return { error: "* Password must be at least 8 characters long" };
@@ -75,7 +75,7 @@ export async function createTag(tag, user) {
 }
 
 export async function newPost(formData) {
-  console.log(formData);
+  // console.log(formData);
   const title = formData.get("title");
   const description = formData.get("description");
   const tags = formData.getAll("tags");

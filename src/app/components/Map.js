@@ -20,7 +20,7 @@ import TemporaryDrawer from "./TemporaryDrawer";
 import { CameraIcon, SearchIcon } from "lucide-react";
 import { Icon } from "leaflet";
 import { Snackbar, Alert } from "@mui/material";
-import { redirect } from "next/navigation";
+import { GpsNotFixed } from "@mui/icons-material";
 
 const myLocation = new Icon({
   iconUrl: "https://img.icons8.com/fluency/48/region-code.png",
@@ -188,16 +188,14 @@ export default function Map() {
   };
 
   useEffect(() => {
-    const storedLocation = Cookies.get("location");
-    const storedZoom = Cookies.get("zoom");
-    if (storedLocation) {
-      setGeoData(JSON.parse(storedLocation));
-    }
-    if (storedZoom) {
-      setMapZoom(storedZoom);
-    } else {
+    // const storedLocation = Cookies.get("location");
+    // const storedZoom = Cookies.get("zoom");
+    // if (storedLocation) {
+    //   setGeoData(JSON.parse(storedLocation));
+    // }
+    // if (storedZoom) {
+    //   setMapZoom(storedZoom);
       fetchLocation();
-    }
   }, []);
 
   const handleCloseSnackbar = (event, reason) => {
@@ -261,6 +259,13 @@ export default function Map() {
             className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2"
           >
             <SearchIcon/>
+          </button>
+          <button
+            type="button"
+            onClick={fetchLocation}
+            className="input-shadow  border text-l bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl m-2"
+          >
+            <GpsNotFixed />
           </button>
         </form>
       </div>
