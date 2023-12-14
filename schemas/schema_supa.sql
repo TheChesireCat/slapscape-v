@@ -1,4 +1,3 @@
-
 CREATE TABLE userAcc (
 	username VARCHAR(15) PRIMARY KEY,
 	password BYTEA NOT NULL,
