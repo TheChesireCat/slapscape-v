@@ -2,7 +2,6 @@ import { getUserData, getTotalPostsByUser } from "@/app/lib/actionsSupa";
 import { CardContent, Typography } from "@mui/material";
 import { cookies } from "next/headers";
 import { verifyJwtToken } from "@/app/lib/auth";
-import { redirect } from "next/navigation";
 import TemporaryDrawer from "@/app/components/TemporaryDrawer";
 import PaginationTags from "@/app/components/PaginationTags";
 import UserPosts from "@/app/components/UserPosts";
@@ -18,10 +17,6 @@ export default async function UserProfile({ searchParams, params }) {
   const totalPages = total.total_posts;
   const postsPerPage = 2;
   const paginationPages = Math.ceil(totalPages / postsPerPage);
-
-  // if (username==params.username){
-  //   redirect("/home/user");
-  // }
 
   if (!userdata) {
     return <div>User Doesn&apos;t Exist</div>;

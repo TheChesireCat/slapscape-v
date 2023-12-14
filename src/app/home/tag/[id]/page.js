@@ -1,4 +1,3 @@
-import { Pagination } from "@mui/material";
 import { getTotalPostsWithTag } from "@/app/lib/actionsSupa";
 import PaginationTags from "@/app/components/PaginationTags";
 import TagPosts from "@/app/components/TagPosts";

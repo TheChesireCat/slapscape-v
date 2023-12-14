@@ -1,6 +1,6 @@
 import { verifyJwtToken } from "@/app/lib/auth";
 import { cookies } from "next/headers";
-import { getPostInfo, getPostImages } from "@/app/lib/actions";
+import { getPostInfo, getPostImages } from "@/app/lib/actionsSupa";
 import { redirect } from "next/navigation";
 import TemporaryDrawer from "@/app/components/TemporaryDrawer";
 import DeleteImage from "@/app/components/DeleteImage";

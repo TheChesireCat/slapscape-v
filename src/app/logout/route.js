@@ -1,4 +1,4 @@
-import { logout } from "../lib/actions";
+import { logout } from "../lib/actionsSupa";
 
 export async function GET() {
 

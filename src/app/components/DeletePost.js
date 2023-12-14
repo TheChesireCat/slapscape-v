@@ -1,4 +1,4 @@
-import { deletePost } from "../lib/actions";
+import { deletePost } from "../lib/actionsSupa";
 
 export default async function DeletePost({ postId }) {
   return (
